@@ -6,3 +6,6 @@ license.workspace = true
 
 [dependencies]
 connectome = { path = "../connectome" }
+rayon = "1"
+serde = { workspace = true }
+serde_json = { workspace = true }

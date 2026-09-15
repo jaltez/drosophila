@@ -1,34 +1,33 @@
-kept segments (status+superclass): 164488
-  with transmitter (per-body or cell-type): 162072
-  without transmitter (dropped): 2416
+neuron nodes (status+superclass): 164488
+  transmitter: per-body/cell-type known: 162072, motor defaulted to glutamate: 730, unknown (no outgoing edges): 1686
 raw edges (all segments): 151,856,684 (311,833,243 synapses)
-filtered edges: 24,798,213 (118,750,232 synapses); autapses dropped: 87
+edges kept: 25,260,933 (122,904,906 synapses); autapses dropped: 100, unknown-nt edges dropped: 293117
 
 E/I (signed synapse sums) by presynaptic superclass:
                            total  excitatory  inhibitory
 sc                                                      
-ascending_neuron       1,602,848   3,218,638   1,615,790
-cb_endocrine               1,175       1,175          -0
-cb_intrinsic           5,126,702  20,548,090  15,421,389
-cb_motor                  -9,432       9,383      18,815
-cb_sensory             2,093,615   2,098,691       5,076
-cb_sensory_tbc            -1,322         974       2,296
-descending_neuron      1,368,534   2,471,059   1,102,525
-descending_neuron_tbc         84          84          -0
-efferent_ascending        -7,277         677       7,954
-ol_intrinsic           8,644,410  26,204,033  17,559,623
-ol_sensory              -525,893           0     525,893
-sensory_ascending        310,694     316,568       5,874
-sensory_ascending_tbc        344         344          -0
-sensory_descending        23,712      23,712          -0
-visual_centrifugal      -320,644     802,528   1,123,172
-visual_projection      5,119,410   6,164,608   1,045,199
+ascending_neuron       1,726,364   3,409,175   1,682,811
+cb_endocrine               1,220       1,220          -0
+cb_intrinsic           5,299,822  21,014,056  15,714,235
+cb_motor                 -17,551      10,471      28,022
+cb_sensory             2,208,149   2,213,344       5,195
+cb_sensory_tbc            -1,359         978       2,337
+descending_neuron      1,513,648   2,740,166   1,226,518
+descending_neuron_tbc        105         105          -0
+efferent_ascending       -11,408         710      12,119
+ol_intrinsic           8,642,055  26,284,232  17,642,177
+ol_sensory              -526,036           0     526,036
+sensory_ascending        342,967     350,063       7,096
+sensory_ascending_tbc        345         345          -0
+sensory_descending        24,590      24,590          -0
+visual_centrifugal      -323,934     807,476   1,131,409
+visual_projection      5,213,672   6,267,388   1,053,716
 visual_projection_tbc        116         151          35
-vnc_efferent                 -57           0          57
-vnc_intrinsic         -1,496,655   5,884,489   7,381,144
-vnc_motor                  5,642       8,358       2,716
-vnc_sensory            3,032,166   3,083,348      51,182
-vnc_sensory_tbc            2,470       2,470          -0
-vnc_tbc                   -2,398         375       2,773
+vnc_efferent                 -69           0          69
+vnc_intrinsic         -1,273,598   7,068,631   8,342,229
+vnc_motor                 -7,020      11,369      18,389
+vnc_sensory            3,105,314   3,160,994      55,681
+vnc_sensory_tbc            2,498       2,498          -0
+vnc_tbc                   -2,262         571       2,833
 
 wrote /home/javier/projects/drosophila/bridge/out/connectome-malecns-v1.0

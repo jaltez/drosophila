@@ -13,6 +13,11 @@ use std::path::{Path, PathBuf};
 use serde::Deserialize;
 
 pub const WEIGHT_SCALE: f32 = 512.0;
+pub const FUNC_INTER: u8 = 0;
+pub const FUNC_SENSORY: u8 = 1;
+pub const FUNC_DN: u8 = 2;
+pub const FUNC_MOTOR: u8 = 3;
+
 
 #[derive(Debug, Deserialize)]
 pub struct Manifest {
@@ -34,6 +39,9 @@ pub struct Connectome {
     pub body_ids: Vec<u64>,
     /// 0=inter, 1=sensory, 2=dn, 3=motor (same order as body_ids)
     pub func_classes: Vec<u8>,
+    /// Superclass index per neuron (into `superclass_names`)
+    pub superclass_codes: Vec<u8>,
+    pub superclass_names: Vec<String>,
     pub csr_offsets: Vec<u64>,
     pub csr_targets: Vec<u32>,
     pub csr_weights: Vec<i16>,
@@ -78,6 +86,9 @@ impl Connectome {
             manifest,
             body_ids: read_exact(&dir.join("body_ids.u64"), n)?,
             func_classes: read_exact(&dir.join("func_classes.u8"), n)?,
+            superclass_codes: read_exact(&dir.join("superclass_codes.u8"), n)?,
+            superclass_names: serde_json::from_str(
+                &fs::read_to_string(dir.join("superclass_names.json"))?)?,
             csr_offsets: read_exact(&dir.join("csr_offsets.u64"), n + 1)?,
             csr_targets: read_exact(&dir.join("csr_targets.u32"), m)?,
             csr_weights: read_exact(&dir.join("csr_weights.i16"), m)?,

@@ -112,6 +112,9 @@ def main() -> None:
     sup_lut = recs.loc[ids].superclass.to_numpy()
     fc_lut = recs.loc[ids].func_class.map(
         {"inter": 0, "sensory": 1, "dn": 2, "motor": 3}).to_numpy(dtype=np.uint8)
+    sup_names = sorted(neurons.superclass.unique())
+    sup_code = {s: i for i, s in enumerate(sup_names)}
+    sup_codes = recs.loc[ids].superclass.map(sup_code).to_numpy(dtype=np.uint8)
 
     # --- filter weights: both ends in neuron set --------------------------
     w = feather.read_table(DATA / WFILE).to_pandas()
@@ -169,6 +172,8 @@ def main() -> None:
     w_fp.tofile(out_dir / "csr_weights.i16")
     ids.tofile(out_dir / "body_ids.u64")
     fc_lut.tofile(out_dir / "func_classes.u8")
+    sup_codes.tofile(out_dir / "superclass_codes.u8")
+    (out_dir / "superclass_names.json").write_text(json.dumps(sup_names, indent=1))
 
     dn_types = sorted(t for t in neurons[neurons.func_class == "dn"].type.dropna().unique())
     (out_dir / "dn_types.json").write_text(json.dumps(dn_types, indent=1))
@@ -195,12 +200,14 @@ def main() -> None:
             "per_func_class": counts_dict(neurons.func_class),
             "per_eff_nt": counts_dict(neurons.eff_nt),
             "per_superclass": counts_dict(neurons.superclass),
+            "superclasses": sup_names,
             "dn_types": len(dn_types),
         },
     }
     (out_dir / "manifest.json").write_text(json.dumps(manifest, indent=1))
     for f in ("neurons.parquet", "body_ids.u64", "csr_offsets.u64",
               "csr_targets.u32", "csr_weights.i16", "func_classes.u8",
+              "superclass_codes.u8", "superclass_names.json",
               "manifest.json"):
         manifest.setdefault("outputs", {})[f] = sha256(out_dir / f)
     (out_dir / "manifest.json").write_text(json.dumps(manifest, indent=1))
