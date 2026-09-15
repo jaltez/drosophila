@@ -1,0 +1,16 @@
+{
+  "_comment": "v0 behavior arbiter seed: DN type -> behavior votes. Confidence: established (multiple studies) / single (one study) / video (Janelia MaleCNS material). Unlisted DN types cast no vote. Values are per-spike-rate influence weights, tuned in calibration.",
+  "votes_per_type": {
+    "DNp01":  { "behavior": "escape",      "w": 2.0, "evidence": "Giant Fiber; Kennedy & Broadie 2018 (cited in MaleCNS annotations); takeoff/jump", "confidence": "established" },
+    "DNg13":  { "behavior": "steer",       "w": 1.0, "evidence": "R1-R6 -> DNg13 visual-motor pathway; Janelia MaleCNS example video", "confidence": "video" },
+    "DNa01":  { "behavior": "walk",        "w": 1.0, "evidence": "walk-promoting; Namiki et al. 2018 descending-neuron survey", "confidence": "single" },
+    "DNa02":  { "behavior": "walk",        "w": 1.0, "evidence": "walk-promoting; Namiki et al. 2018", "confidence": "single" },
+    "MDN":    { "behavior": "walk_back",   "w": 1.0, "evidence": "moonwalker DN, backward walking; Bidayiye et al. 2015", "confidence": "established" }
+  },
+  "behaviors": ["rest", "walk", "walk_back", "steer", "escape", "feed", "groom"],
+  "arbiter": {
+    "hysteresis_ticks": 500,
+    "bias": { "rest": 0.5 },
+    "unmapped_policy": "no-vote"
+  }
+}
