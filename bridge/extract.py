@@ -115,6 +115,18 @@ def main() -> None:
     sup_names = sorted(neurons.superclass.unique())
     sup_code = {s: i for i, s in enumerate(sup_names)}
     sup_codes = recs.loc[ids].superclass.map(sup_code).to_numpy(dtype=np.uint8)
+    # somaSide, falling back to rootSide (ORNs and many sensory neurons have
+    # no soma annotation but a segmented root side: L/R of their entry)
+    ss = neurons.somaSide.where(
+        neurons.somaSide.isin(["L", "R", "midline"]), neurons.rootSide)
+    ss = ss.where(ss.isin(["L", "R", "midline"]), None)
+    side_codes = (ss.fillna("none").map(
+        {"none": 0, "L": 1, "R": 2, "midline": 3}).to_numpy(dtype=np.uint8))
+    type_names = sorted(str(t) for t in neurons.type.dropna().unique())
+    type_code = {t: i for i, t in enumerate(type_names)}
+    type_codes = (recs.loc[ids]["type"]
+                  .map(lambda t: type_code.get(str(t), 65535))
+                  .to_numpy(dtype=np.uint16))
 
     # --- filter weights: both ends in neuron set --------------------------
     w = feather.read_table(DATA / WFILE).to_pandas()
@@ -174,6 +186,9 @@ def main() -> None:
     fc_lut.tofile(out_dir / "func_classes.u8")
     sup_codes.tofile(out_dir / "superclass_codes.u8")
     (out_dir / "superclass_names.json").write_text(json.dumps(sup_names, indent=1))
+    side_codes.tofile(out_dir / "side_codes.u8")
+    type_codes.tofile(out_dir / "type_codes.u16")
+    (out_dir / "type_names.json").write_text(json.dumps(type_names, indent=1))
 
     dn_types = sorted(t for t in neurons[neurons.func_class == "dn"].type.dropna().unique())
     (out_dir / "dn_types.json").write_text(json.dumps(dn_types, indent=1))
@@ -208,6 +223,7 @@ def main() -> None:
     for f in ("neurons.parquet", "body_ids.u64", "csr_offsets.u64",
               "csr_targets.u32", "csr_weights.i16", "func_classes.u8",
               "superclass_codes.u8", "superclass_names.json",
+              "side_codes.u8", "type_codes.u16", "type_names.json",
               "manifest.json"):
         manifest.setdefault("outputs", {})[f] = sha256(out_dir / f)
     (out_dir / "manifest.json").write_text(json.dumps(manifest, indent=1))

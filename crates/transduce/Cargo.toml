@@ -3,3 +3,8 @@ name = "transduce"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
+
+[dependencies]
+connectome = { path = "../connectome" }
+serde = { workspace = true }
+serde_json = { workspace = true }

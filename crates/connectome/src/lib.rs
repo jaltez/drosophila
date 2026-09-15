@@ -42,6 +42,11 @@ pub struct Connectome {
     /// Superclass index per neuron (into `superclass_names`)
     pub superclass_codes: Vec<u8>,
     pub superclass_names: Vec<String>,
+    /// Soma side per neuron: 0 unknown, 1 left, 2 right, 3 midline.
+    pub side_codes: Vec<u8>,
+    /// Cell-type index per neuron (into `type_names`; 65535 = untyped).
+    pub type_codes: Vec<u16>,
+    pub type_names: Vec<String>,
     pub csr_offsets: Vec<u64>,
     pub csr_targets: Vec<u32>,
     pub csr_weights: Vec<i16>,
@@ -92,6 +97,10 @@ impl Connectome {
             csr_offsets: read_exact(&dir.join("csr_offsets.u64"), n + 1)?,
             csr_targets: read_exact(&dir.join("csr_targets.u32"), m)?,
             csr_weights: read_exact(&dir.join("csr_weights.i16"), m)?,
+            side_codes: read_exact(&dir.join("side_codes.u8"), n)?,
+            type_codes: read_exact(&dir.join("type_codes.u16"), n)?,
+            type_names: serde_json::from_str(
+                &fs::read_to_string(dir.join("type_names.json"))?)?,
         })
     }
 
@@ -109,6 +118,29 @@ impl Connectome {
             let e = e as usize;
             (self.csr_targets[e], self.csr_weights[e])
         })
+    }
+
+    /// Neuron index by bodyId, if present.
+    pub fn index_of_body(&self, body_id: u64) -> Option<u32> {
+        self.body_ids
+            .binary_search(&body_id)
+            .ok()
+            .map(|i| i as u32)
+    }
+
+    /// Index of a cell type name, if present.
+    pub fn type_index(&self, name: &str) -> Option<u16> {
+        self.type_names.iter().position(|t| t == name).map(|i| i as u16)
+    }
+
+    /// All neuron indices of a given type (e.g. "DNg13").
+    pub fn indices_of_type(&self, name: &str) -> Vec<u32> {
+        match self.type_index(name) {
+            Some(code) => (0..self.type_codes.len() as u32)
+                .filter(|&i| self.type_codes[i as usize] == code)
+                .collect(),
+            None => Vec::new(),
+        }
     }
 
     /// Total signed fixed-point out-weight per neuron; positive input means

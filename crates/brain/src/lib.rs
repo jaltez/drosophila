@@ -1,15 +1,17 @@
 //! LIF simulation kernel over a loaded connectome.
 //!
-//! Determinism contract: identical connectome artifact, params, seed and
-//! external input produce a bit-identical spike sequence. Enforced by
-//! integer-only arithmetic: weights are i16 fixed-point (bridge SCALE=512),
-//! membrane/current are i64, synaptic accumulation uses integer atomics
-//! (addition of integers is associative — thread order cannot matter), and
-//! per-chunk parallel integration collects spikes in fixed index order.
+//! Determinism contract: identical connectome artifact, params, seed,
+//! external input and sensory-gain timeline produce a bit-identical spike
+//! sequence. Enforced by integer-only arithmetic: weights are i16
+//! fixed-point (bridge SCALE=512), membrane/current are i64, synaptic
+//! accumulation uses integer atomics (addition of integers is associative —
+//! thread order cannot matter), and per-chunk parallel integration collects
+//! spikes in fixed index order.
 //!
 //! Model per 1 ms tick:
 //!   1. firing set S = spikes(t-1) + external + sensory background + intrinsic
-//!      background (both Poisson, drawn in fixed index order)
+//!      background (both Poisson; sensory rate scales per neuron by
+//!      `sensory_gain` from world-driven transducers)
 //!   2. scatter: for src in S,
 //!        w_eff = w * gain[src superclass][w sign] * in_norm[target]
 //!      cur[tgt] += w_eff   (gain is 2D: per-superclass, excitatory vs
@@ -99,6 +101,8 @@ pub struct Brain {
     cur: Vec<AtomicI64>,
     spikes: Vec<u32>,
     sensory: Vec<u32>,
+    /// Per-sensory-neuron rate multiplier (world-driven, e.g. odor field).
+    sensory_gain: Vec<f32>,
     /// All-neuron index list for intrinsic background draws.
     all: Vec<u32>,
     /// Per-target incoming-weight normalizer, fp 4.12 (FP_ONE = unchanged).
@@ -143,6 +147,7 @@ impl Brain {
             cur: (0..n).map(|_| AtomicI64::new(0)).collect(),
             spikes: Vec::new(),
             sensory,
+            sensory_gain: vec![1.0; n],
             all,
             in_norm,
             rng,
@@ -171,6 +176,13 @@ impl Brain {
         self.rng = Rng::new(seed);
     }
 
+    /// Mutable per-sensory-neuron rate multipliers (world-driven). The
+    /// uniform draw is consumed regardless of the effective rate, so the
+    /// PRNG stream is independent of gain values.
+    pub fn sensory_gains_mut(&mut self) -> &mut [f32] {
+        &mut self.sensory_gain
+    }
+
     /// Spikes emitted by the most recent [`Brain::tick`], ascending index.
     pub fn spikes(&self) -> &[u32] {
         &self.spikes
@@ -192,8 +204,9 @@ impl Brain {
         }
         for &i in &self.sensory {
             let sup = self.con.superclass_codes[i as usize] as usize;
-            let lambda = p.sensory_rates_hz[sup] / 1000.0;
-            if lambda > 0.0 && self.rng.next_f64() < lambda {
+            let lambda = p.sensory_rates_hz[sup] / 1000.0
+                * self.sensory_gain[i as usize] as f64;
+            if self.rng.next_f64() < lambda {
                 firing.push(i);
             }
         }
@@ -299,6 +312,9 @@ mod tests {
             func_classes: vec![1, 0, 2],
             superclass_codes: vec![0, 0, 0],
             superclass_names: vec!["syn".into()],
+            side_codes: vec![0, 0, 0],
+            type_codes: vec![0, 0, 0],
+            type_names: vec!["synT".into()],
             csr_offsets,
             csr_targets: targets,
             csr_weights: weights,
@@ -320,23 +336,26 @@ mod tests {
     }
 
     #[test]
-    fn adaptation_limits_sustained_firing() {
-        // neuron 0 driven by ext spike every tick; adaptation must cap its
-        // rate well below 1 kHz
-        let con = synthetic();
-        let mut p = LifParams::default_for(&con);
-        p.sensory_rates_hz = vec![0.0];
+    fn sensory_gain_scales_firing() {
+        // high gain on the sensory neuron drives the chain repeatedly;
+        // zero gain silences it below the baseline rate
+        let mut p = LifParams::default_for(&synthetic());
+        p.sensory_rates_hz = vec![40.0];
         p.intrinsic_hz = 0.0;
-        let n: usize = 2000;
-        let mut b = Brain::new(Arc::new(con), p);
-        let mut fired = 0usize;
-        for _ in 0..n {
-            fired += b.tick(&[0, 1, 2]).iter().filter(|&&i| i == 0).count();
+        p.seed = 7;
+        let mut hot = Brain::new(Arc::new(synthetic()), p.clone());
+        hot.sensory_gains_mut()[0] = 5.0;
+        let mut cold = Brain::new(Arc::new(synthetic()), p);
+        cold.sensory_gains_mut()[0] = 0.0;
+        let mut hot_spikes = 0usize;
+        let mut cold_spikes = 0usize;
+        for _ in 0..2000 {
+            hot_spikes += hot.tick(&[]).len();
+            cold_spikes += cold.tick(&[]).len();
         }
-        // without adaptation 0 "fires" only via ext (not counted); this test
-        // asserts the kernel tracks adaptation without overflow/panic and
-        // that ext-driven integration stays finite
-        assert!(fired < n);
+        assert!(hot_spikes > cold_spikes);
+        assert!(hot_spikes > 100);
+        assert!(cold_spikes == 0);
     }
 
     #[test]
