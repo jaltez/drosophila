@@ -78,7 +78,12 @@ impl WorldConfig {
             sugar_reach_mm: 2.0,
             sugar_k: 30.0,
             freeze_body: false,
-            feed_threshold_hz: 3.0,
+            // calibrated MxLbN baseline is ~2.6 Hz mean: 3.0 left <1-sigma
+            // margin and noise parked the fly in spurious "feed" states.
+            // Real sugar contact boosts afferent gain ~31x (~80 Hz), so
+            // 6.0 keeps a 7-sigma baseline margin with contact trivially
+            // above it.
+            feed_threshold_hz: 6.0,
             groom_threshold_hz: 5.0,
             seed: 7,
         }
@@ -219,6 +224,35 @@ impl Sim {
     /// (bodyId, EMA rate Hz) per steering instance — centering support.
     pub fn steer_instance_stats(&self) -> Vec<(u64, f64)> {
         self.arbiter.steer_instance_stats(&self.con)
+    }
+
+    /// Measure each steering instance's no-stimulus rate in THIS arena
+    /// (odor strength temporarily zeroed, same body/kernel state), then
+    /// recenter bases so the static steering drive is nulled in this
+    /// assay context. Advances the sim by warmup_ms + measure_ms ticks.
+    /// Returns the pre-centering static bias (Hz-equivalent).
+    pub fn center_steer_bases(&mut self, warmup_ms: u64, measure_ms: u64) -> f64 {
+        use std::collections::HashMap;
+        let saved = self.field;
+        self.field = OdorField { x: 1.0e6, y: 1.0e6, strength: 0.0, radius_mm: 8.0 };
+        for _ in 0..warmup_ms {
+            self.step();
+        }
+        let mut sum: HashMap<u64, f64> = HashMap::new();
+        let mut samples = 0u64;
+        for t in 0..measure_ms {
+            self.step();
+            if t % 100 == 0 {
+                for (body, hz) in self.steer_instance_stats() {
+                    *sum.entry(body).or_default() += hz;
+                }
+                samples += 1;
+            }
+        }
+        self.field = saved;
+        let rate_of: HashMap<u64, f64> =
+            sum.into_iter().map(|(b, s)| (b, s / samples as f64)).collect();
+        self.arbiter.recenter_steer_bases(&self.con, &rate_of)
     }
 
 

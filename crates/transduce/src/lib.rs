@@ -177,6 +177,24 @@ impl DnArbiter {
             .collect()
     }
 
+    /// Set every steering instance's base to its measured no-stimulus rate
+    /// (bodyId -> Hz), nulling the static-scene steering drive. Returns
+    /// the pre-centering static bias (Hz-equivalent) for reporting.
+    pub fn recenter_steer_bases(
+        &mut self,
+        con: &Connectome,
+        rate_of: &std::collections::HashMap<u64, f64>,
+    ) -> f64 {
+        let mut pre_bias = 0.0;
+        for (k, w, base) in self.steer_instances.iter_mut() {
+            let body = con.body_ids[self.dn_idx[*k] as usize];
+            let r = rate_of.get(&body).copied().unwrap_or(0.0);
+            pre_bias += *w * (r - *base);
+            *base = r;
+        }
+        pre_bias
+    }
+
     /// Snapshot arbiter dynamics state (EMA rates + steering DC).
     pub fn state(&self) -> (Vec<f64>, f64) {
         (self.ema.clone(), self.steer_dc)

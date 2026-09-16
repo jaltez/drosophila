@@ -86,12 +86,14 @@ fn main() {
         "vis" => (false, true),
         _ => (false, false),
     };
-    let mut steer_insts: Vec<SteerInstance> =
+    let steer_insts: Vec<SteerInstance> =
         if only_vis { Vec::new() } else { steer_insts };
     let mut vis_steer: Vec<SteerInstance> =
         if only_odor { Vec::new() } else { vis_steer };
-    for i in vis_steer.iter_mut() {
-        i.w *= vis_sign;
+    if vis_sign != 1.0 {
+        for i in vis_steer.iter_mut() {
+            i.w *= vis_sign;
+        }
     }
     let (steer_insts, vis_steer, pre_bias) =
         centered_instances(&con, &params, &map, &steer_insts, &vis_steer, seed);

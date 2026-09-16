@@ -75,6 +75,8 @@ struct RunStats {
     d_end: f64,
     d_min: f64,
     d_mean: f64,
+    hold_ms: u64,
+    plume_ms: u64,
     labels_ms: HashMap<&'static str, u64>,
     ticks_per_s: f64,
 }
@@ -127,6 +129,14 @@ fn run_one(
     sim.apply_steer_instances(steer_insts);
     sim.add_steer_instances(vis_steer);
 
+    // In-assay centering (lock-on instrument): null each instance's base
+    // against its measured no-odor rate in this arena, so steering carries
+    // directional modulation rather than construction bias.
+    let mut pre_bias = 0.0;
+    if std::env::var("CHEMO_CENTER").as_deref() != Ok("0") {
+        pre_bias = sim.center_steer_bases(2000, 5000);
+    }
+
     // warm up: 2 s before recording (EMA settling)
     for _ in 0..2000 {
         sim.step();
@@ -140,12 +150,20 @@ fn run_one(
     let d0 = sim_dist(&sim, &field);
     let mut d_min = f64::INFINITY;
     let mut d_sum = 0.0;
+    let mut hold_ms = 0u64;
+    let mut plume_ms = 0u64;
     let t0 = Instant::now();
     for t in 0..total_ticks {
         let info = sim.step();
         *labels.entry(info.label).or_insert(0) += 1;
         let d = sim_dist(&sim, &field);
         d_sum += d;
+        if d <= 5.0 {
+            hold_ms += 1;
+        }
+        if d <= 12.0 {
+            plume_ms += 1;
+        }
         if d < d_min {
             d_min = d;
         }
@@ -198,6 +216,9 @@ fn run_one(
             "mean_mm": d_mean,
             "approached": d_end < d0 - 1.0,
         },
+        "source_hold_ms": hold_ms,
+        "plume_ms": plume_ms,
+        "pre_centering_bias_hz": pre_bias,
         "labels_ms": labels,
         "perf": {
             "ticks": total_ticks,
@@ -218,6 +239,8 @@ fn run_one(
         d_end,
         d_min,
         d_mean,
+        hold_ms,
+        plume_ms,
         labels_ms: labels,
         ticks_per_s,
     }
@@ -329,6 +352,8 @@ fn main() {
                 "min_mm": s.d_min,
                 "mean_mm": s.d_mean,
             },
+            "source_hold_ms": s.hold_ms,
+            "plume_ms": s.plume_ms,
             "labels_ms": s.labels_ms,
             "ticks_per_s": s.ticks_per_s,
         })).collect::<Vec<_>>(),

@@ -81,6 +81,15 @@ fn main() {
     sim.add_steer_instances(&vis_steer);
     sim.vis_objects = vis_objects;
     sim.sugar = sugar;
+
+    // In-assay centering (lock-on instrument): null each steering
+    // instance's base against its measured no-odor rate in this arena.
+    let pre_bias = if std::env::var("CHEMO_CENTER").as_deref() != Ok("0") {
+        sim.center_steer_bases(2000, 5000)
+    } else {
+        0.0
+    };
+
     // warm up: 2 s before recording (EMA settling)
     for _ in 0..2000 {
         sim.step();
@@ -92,11 +101,19 @@ fn main() {
     let mut labels: std::collections::HashMap<&'static str, u64> = Default::default();
     let d0 = sim_dist(&sim, &field);
     let mut d_min = f64::INFINITY;
+    let mut hold_ms = 0u64;
+    let mut plume_ms = 0u64;
     let t0 = Instant::now();
     for t in 0..total_ticks {
         let info = sim.step();
         *labels.entry(info.label).or_insert(0) += 1;
         let d = sim_dist(&sim, &field);
+        if d <= 5.0 {
+            hold_ms += 1;
+        }
+        if d <= 12.0 {
+            plume_ms += 1;
+        }
         if d < d_min {
             d_min = d;
         }
@@ -135,6 +152,9 @@ fn main() {
             "min_mm": d_min,
             "approached": d_end < d0 - 1.0,
         },
+        "source_hold_ms": hold_ms,
+        "plume_ms": plume_ms,
+        "pre_centering_bias_hz": pre_bias,
         "labels_ms": labels,
         "perf": {
             "ticks": total_ticks,

@@ -1,0 +1,17 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Unit tests (includes determinism, resume-identity, steering-sign)
+        run: cargo test --workspace
+      - name: Bit-determinism smoke on synthetic artifact
+        run: cargo test --release -p brain determinism_synthetic
