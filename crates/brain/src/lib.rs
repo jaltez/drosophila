@@ -353,6 +353,7 @@ impl Brain {
         // 0b. gap junctions: diffusive current between coupled neurons
         if self.params.gap_gain_fp != 0 {
             for &(a, b, g) in &self.con.gap_edges {
+                let _ = g; // conductance folded into gap_gain_fp
                 let flow = (self.params.gap_gain_fp
                     * (self.v[b as usize] - self.v[a as usize]))
                     >> FP_SHIFT;
@@ -491,7 +492,7 @@ impl Brain {
                 (buf, d_up)
             })
             .collect::<Vec<_>>();
-            for (mut per_chunk, mut d_up) in chunk_results {
+            for (per_chunk, mut d_up) in chunk_results {
                 for (slot, mut entries) in per_chunk.into_iter().enumerate() {
                     self.buckets[slot].append(&mut entries);
                 }
