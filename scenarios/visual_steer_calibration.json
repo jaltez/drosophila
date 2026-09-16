@@ -1,0 +1,15 @@
+{
+ "calibrated": "2026-09-16",
+ "instrument": "optomotor binary, OPTOMOTOR_OPENLOOP=1 (fly frozen, centered bases, DC tau max)",
+ "pre_flip_transfer_hz": {
+  "-1.0": -1.61,
+  "-0.5": 11.41,
+  "-0.25": 1.19,
+  "0.25": -23.11,
+  "0.5": -4.82,
+  "1.0": -1.72
+ },
+ "finding": "visual steering channel was anti-signed: positive drum omega produced negative steer (opposing motion); response also washes out at |omega|=1 rad/s (12-stripe passage ~1.9 Hz exceeds kernel temporal bandwidth)",
+ "action": "all instance weights negated in place; assay valid for |omega| <= 0.5 rad/s",
+ "validation": "dn_olfactory corr>0 convention applied to the OLFACTORY set only; the visual set's sign through the ommatidial chain was never validated until this measurement"
+}

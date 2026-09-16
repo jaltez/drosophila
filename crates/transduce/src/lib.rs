@@ -15,7 +15,7 @@
 use std::collections::HashMap;
 
 use connectome::Connectome;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 /// EMA window for DN rates (ms) — behavior-relevant timescale.
 const RATE_TAU_MS: f64 = 200.0;
@@ -57,7 +57,7 @@ impl Default for ArbiterCfg {
 }
 
 /// One steering instance from `dn_screen` output.
-#[derive(Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SteerInstance {
     #[serde(rename = "bodyId")]
     pub body_id: u64,
@@ -166,6 +166,15 @@ impl DnArbiter {
 
     pub fn steer_instance_count(&self) -> usize {
         self.steer_instances.len()
+    }
+
+    /// (bodyId, current EMA rate in Hz) per steering instance, in
+    /// instance order — used to center instance bases against a scene.
+    pub fn steer_instance_stats(&self, con: &Connectome) -> Vec<(u64, f64)> {
+        self.steer_instances
+            .iter()
+            .map(|&(k, _, _)| (con.body_ids[self.dn_idx[k] as usize], self.ema[k] * 1000.0))
+            .collect()
     }
 
     /// Snapshot arbiter dynamics state (EMA rates + steering DC).

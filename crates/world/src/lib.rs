@@ -15,6 +15,10 @@ use transduce::{
 #[derive(Clone, Debug)]
 pub struct WorldConfig {
     pub arena_radius_mm: f64,
+    /// Open-loop mode: keep the kernel + arbiter running but do not move
+    /// the body (visual/odor sampling at the fixed initial pose).
+    #[doc(hidden)]
+    pub freeze_body: bool,
     pub walk_speed_mm_s: f64,
     pub back_speed_mm_s: f64,
     /// Walk drive (Hz) at which walking reaches half speed.
@@ -73,6 +77,7 @@ impl WorldConfig {
             visual_acceptance_rad: 5.0 / 180.0 * std::f64::consts::PI,
             sugar_reach_mm: 2.0,
             sugar_k: 30.0,
+            freeze_body: false,
             feed_threshold_hz: 3.0,
             groom_threshold_hz: 5.0,
             seed: 7,
@@ -211,6 +216,11 @@ impl Sim {
         self.arbiter.add_steer_instances(&self.con, insts);
     }
 
+    /// (bodyId, EMA rate Hz) per steering instance — centering support.
+    pub fn steer_instance_stats(&self) -> Vec<(u64, f64)> {
+        self.arbiter.steer_instance_stats(&self.con)
+    }
+
 
 
     pub fn config(&self) -> &WorldConfig {
@@ -340,7 +350,18 @@ impl Sim {
         let mean_conc = 0.5 * (cl + cr);
         let (v, w, label) = self.motion(d, mean_conc);
 
-        // 4. integrate + arena bound
+        // 4. integrate + arena bound (skipped in open-loop mode)
+        if self.cfg.freeze_body {
+            self.t_ms += 1;
+            return StepInfo {
+                t_ms: self.t_ms,
+                fly: self.fly,
+                drives: d,
+                v_mm_s: 0.0,
+                w_rad_s: 0.0,
+                label: "open-loop",
+            };
+        }
         self.fly.heading =
             (self.fly.heading + w / 1000.0).rem_euclid(2.0 * std::f64::consts::PI);
         let nx = self.fly.x + v / 1000.0 * self.fly.heading.cos();
