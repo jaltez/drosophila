@@ -266,8 +266,10 @@ fn main() {
         base_params = LifParams::default_for(&con);
     }
     let map_bytes = fs::read(&map_path).unwrap();
+    let steer_path = std::env::var("STEER_INSTS")
+        .unwrap_or_else(|_| "scenarios/steer_instances.json".into());
     let steer_insts: Vec<SteerInstance> =
-        serde_json::from_slice(&fs::read("scenarios/steer_instances.json").unwrap())
+        serde_json::from_slice(&fs::read(&steer_path).unwrap())
             .expect("load steer instances");
     let vis_steer: Vec<SteerInstance> = fs::read("scenarios/visual_steer_instances.json")
         .ok()

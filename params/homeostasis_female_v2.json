@@ -1,0 +1,47 @@
+{
+ "thresh": 3584,
+ "leak_num": 3897,
+ "refrac_ticks": 2,
+ "gains_exc": [
+  6239,
+  4934,
+  31195,
+  6239,
+  6239,
+  6239,
+  6239,
+  6239,
+  6239,
+  6239
+ ],
+ "gains_inh": [
+  4096,
+  4195,
+  20480,
+  4096,
+  4096,
+  4096,
+  4096,
+  4096,
+  4096,
+  4096
+ ],
+ "sensory_rates_hz": [
+  2.0,
+  2.0,
+  2.0,
+  2.0,
+  2.0,
+  2.0,
+  2.0,
+  2.0,
+  2.0,
+  2.0
+ ],
+ "intrinsic_hz": 0.5,
+ "in_norm_k": 25600,
+ "adapt_k": 2048,
+ "adapt_leak_num": 4055,
+ "seed": 42,
+ "_comment": "v2 = v1 with descending-class gains x5: class-mean v1 calibration left walk/steer command types (DNa01/02, DNg13) below firing threshold; x5 restores DNa02 ~1.5 Hz, DNp01 ~6 Hz (probe: gain_probe mult 5). Known deviation: descending class mean exceeds the 2 Hz class target."
+}

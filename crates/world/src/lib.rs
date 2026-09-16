@@ -442,7 +442,18 @@ impl Sim {
         let surge = 1.0 + self.cfg.surge_gain * mean_conc.min(1.0);
         let v = (self.cfg.walk_speed_mm_s * walk_n - self.cfg.back_speed_mm_s * back_n) * surge;
         let w = self.cfg.steer_gain_rad_s * (d.steer / 50.0).tanh();
-        if self.feed_ema > self.cfg.feed_threshold_hz {
+        // Feeding is CONTACT-driven: without a sugar source in range the
+        // MxLbN afferents carry no food signal, and their spontaneous
+        // bursts must not park the fly in a phantom feed state.
+        let (fx, fy) = (self.fly.x, self.fly.y);
+        let sugar_contact = match self.sugar {
+            Some((sx, sy)) => {
+                ((fx - sx).powi(2) + (fy - sy).powi(2)).sqrt()
+                    <= self.cfg.sugar_reach_mm
+            }
+            None => false,
+        };
+        if sugar_contact && self.feed_ema > self.cfg.feed_threshold_hz {
             return (0.0, 0.0, "feed");
         }
         if self.groom_ema > self.cfg.groom_threshold_hz && walk_n < 0.3 {
