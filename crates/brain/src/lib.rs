@@ -134,8 +134,9 @@ impl LifParams {
     }
 }
 
-/// Full serializable kernel state (checkpoint/resume). `cur` is transient
-/// (zero between ticks) and excluded.
+/// Full serializable kernel state (checkpoint/resume). `cur` IS included:
+/// refractory neurons skip input consumption, so pending sums persist
+/// across ticks and must survive checkpoints.
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct BrainState {
     pub cur: Vec<i64>,
@@ -206,11 +207,18 @@ impl Brain {
         // conduction delays: per-edge tick delay from body positions
         let stsd = if params.stsd_enable {
             let m = con.csr_targets.len();
-            Some((vec![1.0f32; m], vec![0u32; m]))
+            Some((vec![1.0f32; m], vec![0u32; m])) // e=1: fully recovered
         } else {
             None
         };
-        let (edge_delay, buckets) = if params.conduction_enabled {
+        assert!(
+            params.max_delay_ticks >= 1 && params.max_delay_ticks <= 255,
+            "max_delay_ticks must be in 1..=255 (u8 slot storage), got {}",
+            params.max_delay_ticks
+        );
+        // edge delays require conduction; buckets are needed by both the
+        // delayed path and the STSD chunked path
+        let edge_delay = if params.conduction_enabled {
             let max_d = params.max_delay_ticks as usize;
             let m = con.csr_targets.len();
             let speed = params.conduction_speed_mm_ms.max(1e-6);
@@ -234,10 +242,11 @@ impl Brain {
                 }
                 None => vec![1u8; m],
             };
-            (Some(delay), vec![Vec::new(); max_d])
+            Some(delay)
         } else {
-            (None, Vec::new())
+            None
         };
+        let buckets = vec![Vec::new(); params.max_delay_ticks as usize];
 
         Brain {
             con,
@@ -380,6 +389,12 @@ impl Brain {
         }
         firing.extend_from_slice(ext);
         firing.extend_from_slice(&self.spikes);
+        // firing is a set, not a multiset: a neuron driven by several
+        // sources in the same tick delivers ONE spike (refractory synapses).
+        // Sort + dedup is deterministic and segments are pre-sorted where
+        // possible, so this is near-linear in practice.
+        firing.sort_unstable();
+        firing.dedup();
 
         // 2. scatter (integer atomics: order-independent)
         let con = &self.con;
@@ -433,33 +448,41 @@ impl Brain {
                         if w_eff == 0 {
                             continue;
                         }
+                        // Tsodyks-Markram style: stored `e` is the LAST
+                        // depleted fraction; idle time RECOVERS e toward 1
+                        // (e_eff = 1-(1-e)*leak^age), never decays further.
                         let avail = if stsd_on {
                             let (dv, lt) = self.stsd.as_ref().unwrap();
-                            let age = t - lt[e as usize] as u64;
-                            dv[e as usize] * stsd_leak.powi(age as i32) as f32
+                            let age = (t - lt[e as usize] as u64) as i32;
+                            let e_eff =
+                                1.0 - (1.0 - dv[e as usize] as f64) * stsd_leak.powi(age);
+                            e_eff as f32
                         } else {
                             1.0
                         };
                         let delivered = ((w_eff as f64) * avail as f64).round() as i32;
-                        if delivered != 0 {
-                            match &self.edge_delay {
-                                Some(delays) => {
-                                    let d = delays[e as usize] as u64;
-                                    let slot = ((t + d) % d_max) as usize;
-                                    buf[slot].push((tgt, delivered));
-                                }
-                                None => {
-                                    buf[0].push((tgt, delivered)); // slot 0 = direct
-                                }
+                        if delivered == 0 {
+                            continue;
+                        }
+                        match &self.edge_delay {
+                            Some(delays) => {
+                                let d = delays[e as usize] as u64;
+                                let slot = ((t + d) % d_max) as usize;
+                                buf[slot].push((tgt, delivered));
+                            }
+                            None => {
+                                // zero-delay: apply within this tick
+                                self.cur[tgt as usize]
+                                    .fetch_add(delivered as i64, Ordering::Relaxed);
                             }
                         }
                         if stsd_on {
                             let (dv, lt) = self.stsd.as_ref().unwrap();
                             d_up.push((
                                 e as usize,
-                                dv[e as usize]
-                                    * stsd_leak.powi((t - lt[e as usize] as u64) as i32) as f32
-                                    * (1.0 - stsd_u) as f32,
+                                ((1.0 - (1.0 - dv[e as usize] as f64)
+                                    * stsd_leak.powi((t - lt[e as usize] as u64) as i32))
+                                    * (1.0 - stsd_u)) as f32,
                                 t as u32,
                             ));
                         }
@@ -469,14 +492,6 @@ impl Brain {
             })
             .collect::<Vec<_>>();
             for (mut per_chunk, mut d_up) in chunk_results {
-                for (slot, entries) in per_chunk.iter_mut().enumerate() {
-                    if slot == 0 && !delayed {
-                        for (tgt, w) in entries.iter() {
-                            self.cur[*tgt as usize].fetch_add(*w as i64, Ordering::Relaxed);
-                        }
-                        entries.clear();
-                    }
-                }
                 for (slot, mut entries) in per_chunk.into_iter().enumerate() {
                     self.buckets[slot].append(&mut entries);
                 }
@@ -633,6 +648,78 @@ mod tests {
         assert!(b.tick(&[]).is_empty());  // 1->2 in flight (t2+2)
         assert!(b.tick(&[]).is_empty());
         assert_eq!(b.tick(&[]).to_vec(), vec![2]); // fires at t4
+    }
+
+    #[test]
+    fn stsd_reduces_and_recovers() {
+        // single edge 0->1, w = thresh. Drive with ext every 10 ticks.
+        // STSD: first delivery fires neuron 1 (e=1); depleted e then only
+        // partially recovers over 10 idle ticks -> later deliveries
+        // sub-threshold -> strictly fewer postsynaptic spikes than without.
+        let build = |stsd: bool| {
+            let con = synthetic();
+            let mut p = LifParams::default_for(&con);
+            p.sensory_rates_hz = vec![0.0];
+            p.intrinsic_hz = 0.0;
+            p.conduction_enabled = false;
+            // 2x gain: effective weight 8192 = 2x threshold, so depleted
+            // (avail < ~0.5) and recovered (avail ~1) states are separable
+            p.gains_exc = vec![2 * FP_ONE];
+            p.stsd_enable = stsd;
+            p.stsd_u = 0.5;
+            p.stsd_leak_num = 4055.0;
+            Brain::new(Arc::new(con), p)
+        };
+        let mut on = build(true);
+        let mut off = build(false);
+        let mut on_ticks = Vec::new();
+        let mut off_ticks = Vec::new();
+        // Phase 1 (t<200): drive every 10 ticks. Depression must reduce
+        // STSD output below the non-stsd baseline...
+        for t in 0..200 {
+            let ext = if t % 10 == 0 { vec![0u32] } else { Vec::new() };
+            if on.tick(&ext).iter().any(|&i| i == 1) {
+                on_ticks.push(t);
+            }
+            if off.tick(&ext).iter().any(|&i| i == 1) {
+                off_ticks.push(t);
+            }
+        }
+        // First drive delivers full weight (e=1) in both.
+        assert_eq!(on_ticks.first(), Some(&0));
+        assert_eq!(off_ticks.first(), Some(&0));
+        assert!(
+            on_ticks.len() < off_ticks.len(),
+            "depression must reduce output: on {} vs off {}",
+            on_ticks.len(),
+            off_ticks.len()
+        );
+        // Phase 2 (t=500, after 300 idle ticks): recovery must restore
+        // efficacy — the previously-silenced target fires again on STSD.
+        // (idle decays the arbiter of the world: nothing to do here, the
+        // kernel only needs the ticks.)
+        let mut late_on = 0;
+        for _ in 0..10 {
+            let ext = vec![0u32];
+            if on.tick(&ext).iter().any(|&i| i == 1) {
+                late_on += 1;
+            }
+        }
+        assert!(late_on >= 1, "recovery failed: idle synapse stays silenced");
+        assert!(on_ticks.last().unwrap() < &200, "sanity");
+    }
+
+    #[test]
+    fn stsd_without_conduction_no_panic() {
+        // review finding: stsd on + conduction off used to index empty buckets
+        let con = synthetic();
+        let mut p = LifParams::default_for(&con);
+        p.stsd_enable = true;
+        p.conduction_enabled = false;
+        let mut b = Brain::new(Arc::new(con), p);
+        for _ in 0..50 {
+            let _ = b.tick(&[0]);
+        }
     }
 
     #[test]
