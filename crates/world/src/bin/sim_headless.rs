@@ -1,5 +1,5 @@
 //! Headless chemotaxis runner: brain-driven fly in an odor arena, no
-//! rendering. Writes trace.json (100 ms sampling) + summary.json.
+//! rendering. Writes trace.parquet (100 ms sampling) + summary.json.
 
 use std::fs;
 use std::path::Path;
@@ -10,6 +10,7 @@ use brain::LifParams;
 use connectome::Connectome;
 use serde_json::json;
 use transduce::{BehaviorMapFile, OdorField};
+use runlog::TraceRecord;
 use world::{Sim, WorldConfig};
 
 fn main() {
@@ -65,6 +66,9 @@ fn main() {
             y: obj_y,
             radius_mm: 3.0,
             brightness: obj_brightness,
+            pivot: (0.0, 0.0),
+            ang_vel_rad_s: 0.0,
+            ang0: 0.0,
         }]
     } else {
         Vec::new()
@@ -97,27 +101,24 @@ fn main() {
             d_min = d;
         }
         if t % sample_every == 0 {
-            trace.push(json!({
-                "t_ms": info.t_ms,
-                "x": info.fly.x,
-                "y": info.fly.y,
-                "heading": info.fly.heading,
-                "label": info.label,
-                "v": info.v_mm_s,
-                "w": info.w_rad_s,
-                "walk_drive": info.drives.walk,
-                "steer_drive": info.drives.steer,
-                "escape_drive": info.drives.escape,
-                "dist_to_source": d,
-            }));
+            trace.push(TraceRecord {
+                t_ms: info.t_ms,
+                x: info.fly.x,
+                y: info.fly.y,
+                heading: info.fly.heading,
+                label: info.label.to_string(),
+                v: info.v_mm_s,
+                w_rad_s: info.w_rad_s,
+                walk_hz: info.drives.walk,
+                steer_hz: info.drives.steer,
+                escape_hz: info.drives.escape,
+            });
         }
     }
     let wall = t0.elapsed().as_secs_f64();
     let d_end = sim_dist(&sim, &field);
 
     fs::create_dir_all(out_dir).unwrap();
-    let start = trace.first().cloned().unwrap_or(json!({}));
-    let end = trace.last().cloned().unwrap_or(json!({}));
     let summary = json!({
         "config": {
             "seconds": seconds, "seed": seed,
@@ -140,14 +141,11 @@ fn main() {
             "ticks_per_s": total_ticks as f64 / wall,
             "realtime_factor": total_ticks as f64 / wall / 1000.0,
         },
-        "trace_first": start,
-        "trace_last": end,
+        "trace_first": trace.first(),
+        "trace_last": trace.last(),
     });
-    fs::write(
-        Path::new(out_dir).join("trace.json"),
-        serde_json::to_vec(&json!(trace)).unwrap(),
-    )
-    .unwrap();
+    runlog::write_trace_parquet(&Path::new(out_dir).join("trace.parquet"), &trace)
+        .unwrap();
     fs::write(
         Path::new(out_dir).join("summary.json"),
         serde_json::to_vec_pretty(&summary).unwrap(),

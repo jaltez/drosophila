@@ -226,7 +226,7 @@ impl Sim {
             "brain": {
                 "cur": bs.cur, "v": bs.v, "adap": bs.adap, "refrac": bs.refrac,
                 "spikes": bs.spikes, "sensory_gain": bs.sensory_gain,
-                "rng": bs.rng,
+                "buckets": bs.buckets, "stsd": bs.stsd, "rng": bs.rng,
             },
             "arbiter": {"ema": ema, "steer_dc": sdc},
             "fly": {"x": self.fly.x, "y": self.fly.y, "heading": self.fly.heading},
@@ -247,6 +247,8 @@ impl Sim {
             refrac: serde_json::from_value(cp["brain"]["refrac"].clone()).unwrap(),
             spikes: serde_json::from_value(cp["brain"]["spikes"].clone()).unwrap(),
             sensory_gain: serde_json::from_value(cp["brain"]["sensory_gain"].clone()).unwrap(),
+            buckets: serde_json::from_value(cp["brain"]["buckets"].clone()).unwrap(),
+            stsd: serde_json::from_value(cp["brain"]["stsd"].clone()).unwrap(),
             rng: serde_json::from_value(cp["brain"]["rng"].clone()).unwrap(),
             tick: serde_json::from_value(cp["tick"].clone()).unwrap(),
         };
@@ -290,7 +292,13 @@ impl Sim {
             }
         }
 
-        // 1b. vision: ommatidial luminance -> photoreceptor gains
+        // 1b. moving objects advance one tick before visual sampling
+        //     (optomotor drum: VisObject::advance rotates about its pivot)
+        for o in &mut self.vis_objects {
+            o.advance(1);
+        }
+
+        // 1c. vision: ommatidial luminance -> photoreceptor gains
         let lum = self
             .ommatidia
             .luminance(&self.vis_objects, (fx, fy, h), self.cfg.visual_acceptance_rad);

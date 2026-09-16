@@ -50,6 +50,10 @@ pub struct Connectome {
     /// Entry-nerve index per neuron (into `entry_nerve_names`; 0 = none).
     pub entry_nerve_codes: Vec<u16>,
     pub entry_nerve_names: Vec<String>,
+    /// Per-neuron position in mm, if the artifact carries positions.
+    pub positions_mm: Option<Vec<[f32; 3]>>,
+    /// Electrical (gap) synapses: (a, b, weight fp4.12), bidirectional.
+    pub gap_edges: Vec<(u32, u32, i64)>,
     pub csr_offsets: Vec<u64>,
     pub csr_targets: Vec<u32>,
     pub csr_weights: Vec<i16>,
@@ -107,6 +111,31 @@ impl Connectome {
             entry_nerve_codes: read_exact(&dir.join("entry_nerve_codes.u16"), n)?,
             entry_nerve_names: serde_json::from_str(
                 &fs::read_to_string(dir.join("entry_nerve_names.json"))?)?,
+            gap_edges: Vec::new(),
+            positions_mm: {
+                let f = dir.join("positions.f32");
+                if f.exists() {
+                    let bytes = fs::read(&f)?;
+                    if bytes.len() != n * 12 {
+                        return Err(LoadError::Size {
+                            file: f,
+                            expected: (n * 12) as u64,
+                            actual: bytes.len() as u64,
+                        });
+                    }
+                    Some(
+                        bytes
+                            .chunks_exact(4)
+                            .map(|c| f32::from_le_bytes([c[0], c[1], c[2], c[3]]))
+                            .collect::<Vec<f32>>()
+                            .chunks_exact(3)
+                            .map(|c| [c[0], c[1], c[2]])
+                            .collect(),
+                    )
+                } else {
+                    None
+                }
+            }
         })
     }
 
@@ -115,6 +144,18 @@ impl Connectome {
         (0..self.func_classes.len() as u32)
             .filter(|&i| self.func_classes[i as usize] == class)
             .collect()
+    }
+
+    /// Out-edges of neuron `i` as (target, edge_index, weight).
+    pub fn out_edges_indexed(
+        &self,
+        i: u32,
+    ) -> impl Iterator<Item = (u32, u64, i16)> + '_ {
+        let (a, b) = (self.csr_offsets[i as usize], self.csr_offsets[i as usize + 1]);
+        (a..b).map(move |e| {
+            let e = e as usize;
+            (self.csr_targets[e], e as u64, self.csr_weights[e])
+        })
     }
 
     /// Out-edges of neuron `i` as (target, weight) pairs.

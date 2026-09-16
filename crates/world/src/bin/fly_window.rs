@@ -65,6 +65,9 @@ fn main() {
         y: odor_y,
         radius_mm: 3.0,
         brightness: 1.0,
+        pivot: (0.0, 0.0),
+        ang_vel_rad_s: 0.0,
+        ang0: 0.0,
     }];
 
     App::new()

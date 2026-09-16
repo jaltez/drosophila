@@ -305,13 +305,40 @@ pub fn apply_odor_gains(
 }
 
 
-/// A visible object in the arena (mm units).
+/// A visible object in the arena (mm units). Optionally rotates about a
+/// fixed `pivot` (an optomotor drum stripe; static objects default to
+/// pivot = arena center and zero angular velocity).
 #[derive(Clone, Copy, Debug)]
 pub struct VisObject {
     pub x: f64,
     pub y: f64,
     pub radius_mm: f64,
     pub brightness: f64,
+    /// Rotation center (arena center by default).
+    pub pivot: (f64, f64),
+    /// Signed angular velocity about `pivot` (rad/s; + = CCW).
+    pub ang_vel_rad_s: f64,
+    /// Running angle of (pos - pivot) about `pivot` (rad).
+    pub ang0: f64,
+}
+
+impl VisObject {
+    /// Advance angular motion by `dt_ms`: rotate (pos - pivot) about
+    /// `pivot` by `ang_vel_rad_s * dt_ms / 1000`. The radius
+    /// |pos - pivot| is invariant under rotation, so x/y are recomputed
+    /// from the current offset and `ang0` accumulates the running angle.
+    pub fn advance(&mut self, dt_ms: u64) {
+        if self.ang_vel_rad_s == 0.0 {
+            return; // static object: no float work
+        }
+        let dth = self.ang_vel_rad_s * dt_ms as f64 / 1000.0;
+        let (px, py) = self.pivot;
+        let (rx, ry) = (self.x - px, self.y - py);
+        let (c, s) = (dth.cos(), dth.sin());
+        self.x = px + rx * c - ry * s;
+        self.y = py + rx * s + ry * c;
+        self.ang0 += dth;
+    }
 }
 
 /// Ommatidial sampling grid: per-eye directions in head frame.
@@ -365,7 +392,6 @@ impl Ommatidia {
         }
         l.sort_unstable();
         r.sort_unstable();
-        let n_per_eye = self.eye.len() / 2;
         self.neuron = vec![u32::MAX; self.eye.len()];
         for (k, &e) in self.eye.iter().enumerate() {
             let pool = if e == 0 { &l } else { &r };
@@ -452,11 +478,13 @@ mod tests {
             side_codes: vec![1, 2, 1, 2, 0, 1, 2],
             type_codes: vec![1, 1, 2, 2, 0, 0, 0],
             type_names: vec!["other".into(), "DNa01".into(), "DNg13".into()],
+            gap_edges: Vec::new(),
             entry_nerve_codes: vec![0; 7],
             entry_nerve_names: vec!["none".into()],
             csr_offsets: vec![0; 8],
             csr_targets: vec![],
             csr_weights: vec![],
+            positions_mm: None,
         }
     }
 
@@ -545,7 +573,15 @@ mod tests {
         omm.offset = vec![std::f64::consts::FRAC_PI_2, std::f64::consts::FRAC_PI_2];
         omm.neuron = vec![5, 6];
         let _ = con;
-        let objs = [VisObject { x: 0.0, y: 20.0, radius_mm: 3.0, brightness: 1.0 }];
+        let objs = [VisObject {
+            x: 0.0,
+            y: 20.0,
+            radius_mm: 3.0,
+            brightness: 1.0,
+            pivot: (0.0, 0.0),
+            ang_vel_rad_s: 0.0,
+            ang0: 0.0,
+        }];
         // fly at origin heading +x: object at +y = left side
         let lum = omm.luminance(&objs, (0.0, 0.0, 0.0), (5.0f64/180.0*std::f64::consts::PI));
         assert!(lum[0] > 0.9, "left eye should see the left object: {}", lum[0]);
@@ -562,9 +598,53 @@ mod tests {
         omm.eye = vec![0, 1];
         omm.offset = vec![std::f64::consts::FRAC_PI_2, std::f64::consts::FRAC_PI_2];
         omm.neuron = vec![5, 6];
-        let objs = [VisObject { x: 20.0, y: 0.0, radius_mm: 3.0, brightness: 1.0 }];
+        let objs = [VisObject {
+            x: 20.0,
+            y: 0.0,
+            radius_mm: 3.0,
+            brightness: 1.0,
+            pivot: (0.0, 0.0),
+            ang_vel_rad_s: 0.0,
+            ang0: 0.0,
+        }];
         // dead ahead (+x from heading 0): both eyes' edge ommatidia see a dim edge
         let lum = omm.luminance(&objs, (0.0, 0.0, 0.0), (5.0f64/180.0*std::f64::consts::PI));
         assert!((lum[0] - lum[1]).abs() < 0.35, "ahead should be near-symmetric: {} {}", lum[0], lum[1]);
+    }
+
+    /// Drum rotation: pi/2 rad/s about the arena center takes a stripe at
+    /// (20, 0) through a quarter turn CCW to (0, 20) in 1 s, and keeps
+    /// going on the next advance. Static objects (ang_vel = 0) never move.
+    #[test]
+    fn vis_object_advance_rotates_about_pivot() {
+        let mut o = VisObject {
+            x: 20.0,
+            y: 0.0,
+            radius_mm: 2.0,
+            brightness: 1.0,
+            pivot: (0.0, 0.0),
+            ang_vel_rad_s: std::f64::consts::FRAC_PI_2,
+            ang0: 0.0,
+        };
+        o.advance(1000); // 1 s at pi/2 rad/s = quarter turn CCW
+        assert!(o.x.abs() < 1e-6, "x {} should be ~0", o.x);
+        assert!((o.y - 20.0).abs() < 1e-6, "y {} should be ~20", o.y);
+        assert!((o.ang0 - std::f64::consts::FRAC_PI_2).abs() < 1e-9);
+        // continuing rotation: (0, 20) -> (-20, 0)
+        o.advance(1000);
+        assert!((o.x + 20.0).abs() < 1e-6, "x {} should be ~-20", o.x);
+        assert!(o.y.abs() < 1e-6, "y {} should be ~0", o.y);
+
+        let mut s = VisObject {
+            x: 5.0,
+            y: -3.0,
+            radius_mm: 1.0,
+            brightness: 0.5,
+            pivot: (0.0, 0.0),
+            ang_vel_rad_s: 0.0,
+            ang0: 0.0,
+        };
+        s.advance(5000);
+        assert_eq!((s.x, s.y), (5.0, -3.0), "static object must not move");
     }
 }
