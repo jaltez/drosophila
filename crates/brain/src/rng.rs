@@ -9,6 +9,15 @@ impl Rng {
         Rng(if seed == 0 { 0x9E3779B97F4A7C15 } else { seed })
     }
 
+    /// Capture/restore full PRNG state (checkpointing).
+    pub fn state(&self) -> u64 {
+        self.0
+    }
+
+    pub fn from_state(state: u64) -> Self {
+        Rng(if state == 0 { 0x9E3779B97F4A7C15 } else { state })
+    }
+
     #[inline]
     pub fn next_u64(&mut self) -> u64 {
         let mut x = self.0;

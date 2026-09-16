@@ -92,6 +92,20 @@ impl LifParams {
     }
 }
 
+/// Full serializable kernel state (checkpoint/resume). `cur` is transient
+/// (zero between ticks) and excluded.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct BrainState {
+    pub cur: Vec<i64>,
+    pub v: Vec<i64>,
+    pub adap: Vec<i64>,
+    pub refrac: Vec<u32>,
+    pub spikes: Vec<u32>,
+    pub sensory_gain: Vec<f32>,
+    pub rng: u64,
+    pub tick: u64,
+}
+
 pub struct Brain {
     con: Arc<Connectome>,
     params: LifParams,
@@ -159,6 +173,37 @@ impl Brain {
         self.tick
     }
 
+    /// Snapshot the full kernel state. `cur` is included: refractory
+    /// neurons skip input consumption, so pending sums persist across ticks.
+    pub fn state(&self) -> BrainState {
+        let cur: Vec<i64> = self.cur.iter().map(|c| c.load(Ordering::Relaxed)).collect();
+        BrainState {
+            cur,
+            v: self.v.clone(),
+            adap: self.adap.clone(),
+            refrac: self.refrac.clone(),
+            spikes: self.spikes.clone(),
+            sensory_gain: self.sensory_gain.clone(),
+            rng: self.rng.state(),
+            tick: self.tick,
+        }
+    }
+
+    /// Restore kernel state (connectome/params must be identical).
+    pub fn set_state(&mut self, st: BrainState) {
+        assert_eq!(st.v.len(), self.v.len());
+        for (c, &val) in self.cur.iter().zip(&st.cur) {
+            c.store(val, Ordering::Relaxed);
+        }
+        self.v = st.v;
+        self.adap = st.adap;
+        self.refrac = st.refrac;
+        self.spikes = st.spikes;
+        self.sensory_gain = st.sensory_gain;
+        self.rng = Rng::from_state(st.rng);
+        self.tick = st.tick;
+    }
+
     pub fn params(&self) -> &LifParams {
         &self.params
     }
@@ -196,9 +241,16 @@ impl Brain {
         let p = self.params.clone(); // tiny; avoids double borrows below
         let intrinsic_lambda = p.intrinsic_hz / 1000.0;
         if intrinsic_lambda > 0.0 {
-            for &i in &self.all {
-                if self.rng.next_f64() < intrinsic_lambda {
-                    firing.push(i);
+            // Geometric-skip sampling: identical distribution to per-neuron
+            // Bernoulli draws, one uniform per SPIKE instead of per neuron
+            // (p ~ 5e-4 -> ~80 draws instead of 164k).
+            let ln1p = (1.0 - intrinsic_lambda).ln();
+            let mut i: u64 = 0;
+            while i < self.all.len() as u64 {
+                let u = self.rng.next_f64().max(1e-12);
+                i += ((u.ln() / ln1p).floor() as u64) + 1;
+                if i <= self.all.len() as u64 {
+                    firing.push(self.all[(i - 1) as usize]);
                 }
             }
         }
@@ -315,6 +367,8 @@ mod tests {
             side_codes: vec![0, 0, 0],
             type_codes: vec![0, 0, 0],
             type_names: vec!["synT".into()],
+            entry_nerve_codes: vec![0, 0, 0],
+            entry_nerve_names: vec!["none".into()],
             csr_offsets,
             csr_targets: targets,
             csr_weights: weights,

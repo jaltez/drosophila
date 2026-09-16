@@ -1,0 +1,29 @@
+annotation status vocabulary:
+status
+NaN            138590
+outlier_seg       344
+outlier_bio       314
+neuron nodes (status unflagged + super_class): 138590
+  dropped outlier-flagged segments: 658
+  proofread root-id list: 139,255; not in annotations TSV: 14; nodes outside that list: 7
+  transmitter: known: 137993, unknown (no outgoing edges): 597 (motor among them: 0)
+
+connections: 16,847,997 rows -> 15,091,983 (pre,post) pairs (54,492,922 synapses)
+  unknown-NT dropped edges by presynaptic func_class (0=inter,1=sensory,2=dn,3=motor): 
+edges kept: 14,887,763 (53,741,615 synapses); autapses dropped: 0, unknown-nt edges dropped: 0
+
+E/I (signed synapse sums) by presynaptic superclass:
+                       total  excitatory  inhibitory
+sc                                                  
+ascending            396,799     800,189     403,390
+central            1,494,776  10,665,802   9,171,027
+descending           171,792     433,116     261,324
+endocrine                755         797          42
+motor                 -2,322       5,538       7,860
+optic              4,151,188  14,435,464  10,284,276
+sensory              884,046     999,454     115,407
+sensory_ascending     29,003      38,740       9,737
+visual_centrifugal  -211,036     530,248     741,285
+visual_projection  2,411,468   3,147,954     736,487
+
+wrote /home/javier/projects/drosophila/bridge/out/connectome-flywire-v783

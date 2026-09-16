@@ -122,6 +122,11 @@ def main() -> None:
     ss = ss.where(ss.isin(["L", "R", "midline"]), None)
     side_codes = (ss.fillna("none").map(
         {"none": 0, "L": 1, "R": 2, "midline": 3}).to_numpy(dtype=np.uint8))
+    nerve_names = sorted(
+        str(n) for n in neurons.entryNerve.fillna("none").unique())
+    nerve_code = {n: i for i, n in enumerate(nerve_names)}
+    nerve_codes = (neurons.entryNerve.fillna("none").map(nerve_code)
+                   .to_numpy(dtype=np.uint16))
     type_names = sorted(str(t) for t in neurons.type.dropna().unique())
     type_code = {t: i for i, t in enumerate(type_names)}
     type_codes = (recs.loc[ids]["type"]
@@ -187,6 +192,9 @@ def main() -> None:
     sup_codes.tofile(out_dir / "superclass_codes.u8")
     (out_dir / "superclass_names.json").write_text(json.dumps(sup_names, indent=1))
     side_codes.tofile(out_dir / "side_codes.u8")
+    nerve_codes.tofile(out_dir / "entry_nerve_codes.u16")
+    (out_dir / "entry_nerve_names.json").write_text(
+        json.dumps(nerve_names, indent=1))
     type_codes.tofile(out_dir / "type_codes.u16")
     (out_dir / "type_names.json").write_text(json.dumps(type_names, indent=1))
 
@@ -223,7 +231,8 @@ def main() -> None:
     for f in ("neurons.parquet", "body_ids.u64", "csr_offsets.u64",
               "csr_targets.u32", "csr_weights.i16", "func_classes.u8",
               "superclass_codes.u8", "superclass_names.json",
-              "side_codes.u8", "type_codes.u16", "type_names.json",
+              "side_codes.u8", "entry_nerve_codes.u16",
+              "entry_nerve_names.json", "type_codes.u16", "type_names.json",
               "manifest.json"):
         manifest.setdefault("outputs", {})[f] = sha256(out_dir / f)
     (out_dir / "manifest.json").write_text(json.dumps(manifest, indent=1))

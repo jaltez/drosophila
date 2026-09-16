@@ -47,6 +47,9 @@ pub struct Connectome {
     /// Cell-type index per neuron (into `type_names`; 65535 = untyped).
     pub type_codes: Vec<u16>,
     pub type_names: Vec<String>,
+    /// Entry-nerve index per neuron (into `entry_nerve_names`; 0 = none).
+    pub entry_nerve_codes: Vec<u16>,
+    pub entry_nerve_names: Vec<String>,
     pub csr_offsets: Vec<u64>,
     pub csr_targets: Vec<u32>,
     pub csr_weights: Vec<i16>,
@@ -101,6 +104,9 @@ impl Connectome {
             type_codes: read_exact(&dir.join("type_codes.u16"), n)?,
             type_names: serde_json::from_str(
                 &fs::read_to_string(dir.join("type_names.json"))?)?,
+            entry_nerve_codes: read_exact(&dir.join("entry_nerve_codes.u16"), n)?,
+            entry_nerve_names: serde_json::from_str(
+                &fs::read_to_string(dir.join("entry_nerve_names.json"))?)?,
         })
     }
 

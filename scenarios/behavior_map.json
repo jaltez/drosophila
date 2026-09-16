@@ -1,21 +1,82 @@
 {
-  "_comment": "v0 behavior arbiter seed: DN type -> behavior votes. Confidence: established (multiple studies) / single (one study) / video (Janelia MaleCNS material). Unlisted DN types cast no vote. Values are per-spike-rate influence weights, tuned in calibration.",
-  "votes_per_type": {
-    "DNp01":  { "behavior": "escape",      "w": 2.0, "evidence": "Giant Fiber; Kennedy & Broadie 2018 (cited in MaleCNS annotations); takeoff/jump", "confidence": "established" },
-    "DNg13":  { "behavior": "steer",       "w": 0.5, "evidence": "R1-R6 -> DNg13 visual-motor pathway; Janelia MaleCNS example video", "confidence": "video" },
-    "DNa01":  { "behavior": "walk",        "w": 1.0, "evidence": "walk-promoting; Namiki et al. 2018 descending-neuron survey", "confidence": "single" },
-    "DNa02":  { "behavior": "walk",        "w": 1.0, "evidence": "walk-promoting; Namiki et al. 2018", "confidence": "single" },
-    "MDN":    { "behavior": "walk_back",   "w": 1.0, "evidence": "moonwalker DN, backward walking; Bidayiye et al. 2015", "confidence": "established" },
-    "DNge016": { "behavior": "steer",      "w": 2.0, "evidence": "dn_screen: unilateral left-antenna odor responder (L 1.17 Hz, R 0.00)", "confidence": "screen" },
-    "DNg29":   { "behavior": "steer",      "w": 1.5, "evidence": "dn_screen: L 1.00 Hz, R 0.00", "confidence": "screen" },
-    "DNg07":   { "behavior": "steer",      "w": 1.5, "evidence": "dn_screen: L 0.83 Hz, R 0.00, n=16", "confidence": "screen" },
-    "DNp29":   { "behavior": "steer",      "w": 1.0, "evidence": "dn_screen: L 1.92 Hz, R 0.83 (asym +0.39)", "confidence": "screen" },
-    "DNge055": { "behavior": "steer",      "w": 1.0, "evidence": "dn_screen: L 0.75 Hz, R 0.17 (asym +0.64)", "confidence": "screen" }
+ "_comment": "v0 behavior arbiter seed: DN type -> behavior votes. Confidence: established (multiple studies) / single (one study) / video (Janelia MaleCNS material). Unlisted DN types cast no vote. Values are per-spike-rate influence weights, tuned in calibration.",
+ "votes_per_type": {
+  "DNp01": {
+   "behavior": "escape",
+   "w": 2.0,
+   "evidence": "Giant Fiber; Kennedy & Broadie 2018 (cited in MaleCNS annotations); takeoff/jump",
+   "confidence": "established"
   },
-  "behaviors": ["rest", "walk", "walk_back", "steer", "escape", "feed", "groom"],
-  "arbiter": {
-    "hysteresis_ticks": 500,
-    "bias": { "rest": 0.5 },
-    "unmapped_policy": "no-vote"
+  "DNg13": {
+   "behavior": "steer",
+   "w": 0.5,
+   "evidence": "R1-R6 -> DNg13 visual-motor pathway; Janelia MaleCNS example video",
+   "confidence": "video"
+  },
+  "DNa01": {
+   "behavior": "walk",
+   "w": 1.0,
+   "evidence": "walk-promoting; Namiki et al. 2018 descending-neuron survey",
+   "confidence": "single"
+  },
+  "DNa02": {
+   "behavior": "walk",
+   "w": 1.0,
+   "evidence": "walk-promoting; Namiki et al. 2018",
+   "confidence": "single"
+  },
+  "MDN": {
+   "behavior": "walk_back",
+   "w": 1.0,
+   "evidence": "moonwalker DN, backward walking; Bidayiye et al. 2015",
+   "confidence": "established"
+  },
+  "DNge016": {
+   "behavior": "steer",
+   "w": 2.0,
+   "evidence": "dn_screen: unilateral left-antenna odor responder (L 1.17 Hz, R 0.00)",
+   "confidence": "screen"
+  },
+  "DNg29": {
+   "behavior": "steer",
+   "w": 1.5,
+   "evidence": "dn_screen: L 1.00 Hz, R 0.00",
+   "confidence": "screen"
+  },
+  "DNg07": {
+   "behavior": "steer",
+   "w": 1.5,
+   "evidence": "dn_screen: L 0.83 Hz, R 0.00, n=16",
+   "confidence": "screen"
+  },
+  "DNp29": {
+   "behavior": "steer",
+   "w": 1.0,
+   "evidence": "dn_screen: L 1.92 Hz, R 0.83 (asym +0.39)",
+   "confidence": "screen"
+  },
+  "DNge055": {
+   "behavior": "steer",
+   "w": 1.0,
+   "evidence": "dn_screen: L 0.75 Hz, R 0.17 (asym +0.64)",
+   "confidence": "screen"
   }
+ },
+ "behaviors": [
+  "rest",
+  "walk",
+  "walk_back",
+  "steer",
+  "escape",
+  "feed",
+  "groom"
+ ],
+ "arbiter": {
+  "hysteresis_ticks": 500,
+  "bias": {
+   "rest": 0.5
+  },
+  "unmapped_policy": "no-vote",
+  "steer_dc_tau_ms": 1000.0
+ }
 }

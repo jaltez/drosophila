@@ -43,6 +43,10 @@ fn main() {
         &std::fs::read("scenarios/steer_instances.json").unwrap(),
     )
     .unwrap();
+    let vis_steer: Vec<transduce::SteerInstance> = serde_json::from_slice(
+        &std::fs::read("scenarios/visual_steer_instances.json").unwrap_or_default(),
+    )
+    .unwrap_or_default();
     let cfg = WorldConfig {
         seed,
         ..WorldConfig::for_con(&con)
@@ -55,6 +59,13 @@ fn main() {
     };
     let mut sim = Sim::new(Arc::new(con), params, &map, field, cfg);
     sim.apply_steer_instances(&steer_insts);
+    sim.add_steer_instances(&vis_steer);
+    sim.vis_objects = vec![transduce::VisObject {
+        x: odor_x,
+        y: odor_y,
+        radius_mm: 3.0,
+        brightness: 1.0,
+    }];
 
     App::new()
         .add_plugins(DefaultPlugins.set(WindowPlugin {

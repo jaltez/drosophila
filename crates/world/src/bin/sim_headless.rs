@@ -22,17 +22,35 @@ fn main() {
     let seed: u64 = args.get(6).and_then(|s| s.parse().ok()).unwrap_or(7);
     let odor_x: f64 = args.get(7).and_then(|s| s.parse().ok()).unwrap_or(25.0);
     let odor_y: f64 = args.get(8).and_then(|s| s.parse().ok()).unwrap_or(0.0);
+    let odor_k: f64 = args.get(9).and_then(|s| s.parse().ok()).unwrap_or(12.0);
+    let obj_x: f64 = args.get(10).and_then(|s| s.parse().ok()).unwrap_or(0.0);
+    let obj_y: f64 = args.get(11).and_then(|s| s.parse().ok()).unwrap_or(0.0);
+    let obj_brightness: f64 = args.get(12).and_then(|s| s.parse().ok()).unwrap_or(0.0);
+    let sugar_x: f64 = args.get(13).and_then(|s| s.parse().ok()).unwrap_or(f64::NAN);
+    let sugar_y: f64 = args.get(14).and_then(|s| s.parse().ok()).unwrap_or(f64::NAN);
+    let sugar = if sugar_x.is_nan() { None } else { Some((sugar_x, sugar_y)) };
+    let inst_file = args.get(15).map(|s| s.as_str()).unwrap_or("scenarios/steer_instances.json");
 
     let con = Connectome::load(Path::new(con_dir)).expect("load connectome");
     let mut params: LifParams =
         serde_json::from_slice(&fs::read(params_path).unwrap()).unwrap();
     params.seed = seed;
+    if params.gains_exc.len() != con.superclass_names.len() {
+        params = LifParams::default_for(&con);
+    }
     let map: BehaviorMapFile =
         serde_json::from_slice(&fs::read(map_path).unwrap()).unwrap();
     let steer_insts: Vec<transduce::SteerInstance> =
-        serde_json::from_slice(&fs::read("scenarios/steer_instances.json").unwrap()).unwrap();
+        serde_json::from_slice(&fs::read(inst_file).unwrap()).unwrap();
+    let vis_steer: Vec<transduce::SteerInstance> = fs::read(
+        "scenarios/visual_steer_instances.json",
+    )
+    .ok()
+    .and_then(|b| serde_json::from_slice(&b).ok())
+    .unwrap_or_default();
     let cfg = WorldConfig {
         seed,
+        odor_k,
         ..WorldConfig::for_con(&con)
     };
     let field = OdorField {
@@ -41,11 +59,24 @@ fn main() {
         strength: 1.0,
         radius_mm: 8.0,
     };
+    let vis_objects = if obj_brightness > 0.0 {
+        vec![transduce::VisObject {
+            x: obj_x,
+            y: obj_y,
+            radius_mm: 3.0,
+            brightness: obj_brightness,
+        }]
+    } else {
+        Vec::new()
+    };
 
     let sim_con = Arc::new(con);
     let con_for_summary = Arc::clone(&sim_con);
     let mut sim = Sim::new(sim_con, params, &map, field, cfg.clone());
     sim.apply_steer_instances(&steer_insts);
+    sim.add_steer_instances(&vis_steer);
+    sim.vis_objects = vis_objects;
+    sim.sugar = sugar;
     // warm up: 2 s before recording (EMA settling)
     for _ in 0..2000 {
         sim.step();
@@ -90,7 +121,9 @@ fn main() {
     let summary = json!({
         "config": {
             "seconds": seconds, "seed": seed,
-            "odor": {"x": field.x, "y": field.y, "radius_mm": field.radius_mm, "k": cfg.odor_k},
+            "odor": {"x": field.x, "y": field.y, "radius_mm": field.radius_mm, "k": odor_k},
+            "visual_object": {"x": obj_x, "y": obj_y, "brightness": obj_brightness},
+            "sugar": sugar.map(|(x, y)| json!({"x": x, "y": y})),
             "arena_radius_mm": cfg.arena_radius_mm,
             "connectome": {"neurons": con_for_summary.body_ids.len(),
                             "edges": con_for_summary.csr_targets.len()},

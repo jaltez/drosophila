@@ -24,12 +24,18 @@ fn main() {
     let out_path = args.get(3).map(|s| s.as_str()).unwrap_or("runs/dn_screen.json");
 
     let con = Connectome::load(Path::new(con_dir)).expect("load connectome");
-    let params: LifParams = serde_json::from_slice(&fs::read(params_path).unwrap()).unwrap();
+    let mut params: LifParams = serde_json::from_slice(&fs::read(params_path).unwrap()).unwrap();
+    if params.gains_exc.len() != con.superclass_names.len() {
+        eprintln!("params gains {} != artifact superclasses {}; using defaults",
+            params.gains_exc.len(), con.superclass_names.len());
+        params = LifParams::default_for(&con);
+    }
+    let stim_class = args.get(4).map(|s| s.as_str()).unwrap_or("cb_sensory");
     let cb_sensory = con
         .superclass_names
         .iter()
-        .position(|n| n == "cb_sensory")
-        .expect("cb_sensory") as u8;
+        .position(|n| n == stim_class)
+        .unwrap_or_else(|| panic!("superclass {} not found", stim_class)) as u8;
 
     // sided cb_sensory neurons
     let mut orns_l = Vec::new();

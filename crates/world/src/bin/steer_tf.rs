@@ -24,10 +24,14 @@ fn main() {
     let out_path = args.get(4).map(|s| s.as_str()).unwrap_or("runs/steer_tf.json");
 
     let con = Connectome::load(Path::new(con_dir)).expect("load connectome");
-    let params: LifParams = serde_json::from_slice(&fs::read(params_path).unwrap()).unwrap();
+    let mut params: LifParams = serde_json::from_slice(&fs::read(params_path).unwrap()).unwrap();
+    if params.gains_exc.len() != con.superclass_names.len() {
+        params = LifParams::default_for(&con);
+    }
     let map: BehaviorMapFile = serde_json::from_slice(&fs::read(map_path).unwrap()).unwrap();
+    let inst_file = args.get(5).map(|s| s.as_str()).unwrap_or("scenarios/steer_instances.json");
     let steer_insts: Vec<transduce::SteerInstance> =
-        serde_json::from_slice(&fs::read("scenarios/steer_instances.json").unwrap()).unwrap();
+        serde_json::from_slice(&fs::read(inst_file).unwrap()).unwrap();
     let cfg = WorldConfig::for_con(&con);
 
     let con_arc = Arc::new(con);
