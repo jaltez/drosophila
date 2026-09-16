@@ -78,7 +78,6 @@ struct SimBox(Option<Sim>);
 #[derive(Resource)]
 struct Entities {
     fly: Entity,
-    arena: Entity,
     odor: Entity,
     text: Entity,
 }
@@ -87,13 +86,13 @@ fn setup(mut commands: Commands, sim: Res<SimBox>, mut meshes: ResMut<Assets<Mes
     commands.spawn(Camera2d);
     let sim = sim.0.as_ref().unwrap();
 
+    // static arena disc; never moved, so no Entity handle is kept
     let r_arena = sim_cfg(sim).arena_radius_mm as f32 * PIXELS_PER_MM;
-    let arena = commands
+    commands
         .spawn((
             Mesh2d(meshes.add(Circle::new(r_arena))),
             MeshMaterial2d(materials.add(Color::srgb(0.09, 0.12, 0.16))),
-        ))
-        .id();
+        ));
 
     let r_odor = 4.0 * PIXELS_PER_MM;
     let odor = commands
@@ -134,7 +133,6 @@ fn setup(mut commands: Commands, sim: Res<SimBox>, mut meshes: ResMut<Assets<Mes
 
     commands.insert_resource(Entities {
         fly,
-        arena,
         odor,
         text,
     });
