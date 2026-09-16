@@ -55,6 +55,8 @@ mean_vox = np.divide(sums, counts[:, None],
 pos_mm = (mean_vox * 8e-3 / 1000.0).astype(np.float32)
 pos_mm.tofile(D / "positions.f32")
 
+# Uncovered bodies are written as (0,0,0): with conduction delays enabled
+# their efferent delay clamps to the 1-tick minimum ("unknown -> shortest").
 meta = {"covered": covered, "total": n, "units": "mm"}
 (D / "positions_present.json").write_text(json.dumps(meta, indent=1))
 print(f"covered {covered}/{n} bodies with positions; wrote positions.f32")

@@ -1,5 +1,5 @@
 {
- "_comment": "v0 behavior arbiter seed: DN type -> behavior votes. Confidence: established (multiple studies) / single (one study) / video (Janelia MaleCNS material). Unlisted DN types cast no vote. Values are per-spike-rate influence weights, tuned in calibration.",
+ "_comment": "v0 behavior arbiter seed: DN type -> behavior votes. Confidence: established (multiple studies) / single (one study) / video (Janelia MaleCNS material). Unlisted DN types cast no vote. Values are per-spike-rate influence weights, tuned in calibration. | arbiter.steer_dc_tau_ms = steering high-pass window (ms).",
  "votes_per_type": {
   "DNp01": {
    "behavior": "escape",
@@ -72,10 +72,6 @@
   "groom"
  ],
  "arbiter": {
-  "hysteresis_ticks": 500,
-  "bias": {
-   "rest": 0.5
-  },
   "unmapped_policy": "no-vote",
   "steer_dc_tau_ms": 1000.0
  }

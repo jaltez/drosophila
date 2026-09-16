@@ -40,10 +40,6 @@ pub struct VoteDef {
 
 #[derive(Debug, Deserialize)]
 pub struct ArbiterCfg {
-    #[serde(default = "default_hysteresis")]
-    pub hysteresis_ticks: u32,
-    #[serde(default)]
-    pub bias: HashMap<String, f64>,
     #[serde(default = "default_dc_tau")]
     pub steer_dc_tau_ms: f64,
 }
@@ -52,15 +48,9 @@ fn default_dc_tau() -> f64 {
     DEFAULT_STEER_DC_TAU_MS
 }
 
-fn default_hysteresis() -> u32 {
-    500
-}
-
 impl Default for ArbiterCfg {
     fn default() -> Self {
         ArbiterCfg {
-            hysteresis_ticks: 500,
-            bias: HashMap::new(),
             steer_dc_tau_ms: DEFAULT_STEER_DC_TAU_MS,
         }
     }
