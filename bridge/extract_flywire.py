@@ -33,6 +33,10 @@ FlyWire-specific policy (differences from MaleCNS, mirrored in manifest):
     motor neurons). Unknown -> keep node, drop outgoing edges.
   - Edges: connections feather aggregated to one row per (pre, post) pair
     by summing syn_count, then restricted to the node set; autapses dropped.
+
+Vocabulary (status, super_class, side, sign) is shared with extract.py via
+bridge/vocab.py; unmapped values are reported loudly and fail the run under
+--strict / VOCAB_STRICT=1.
 """
 import hashlib
 import json
@@ -42,17 +46,15 @@ import numpy as np
 import pandas as pd
 import pyarrow.feather as feather
 
+import vocab
+from vocab import SCALE, SIGN
+
 DATA = Path(__file__).parent / "data"
 OUT = Path(__file__).parent / "out"
 
 CONN = "proofread_connections_783.feather"
 ANNOT = "Supplemental_file1_neuron_annotations.tsv"
 IDS = "proofread_root_ids_783.npy"
-
-SIGN = {"acetylcholine": 1.0, "gaba": -1.0, "glutamate": -1.0, "histamine": -1.0,
-        "dopamine": 0.5, "serotonin": 0.5, "octopamine": 0.5, "tyramine": 0.5}
-SCALE = 512  # fixed-point scale for i16 weights
-SIDE = {"left": 1, "right": 2, "center": 3}  # else 0 (unknown)
 
 
 def sha256(path: Path) -> str:
@@ -67,20 +69,16 @@ def counts_dict(series: pd.Series) -> dict:
     return {str(k): int(v) for k, v in series.value_counts().items()}
 
 
-def func_of(super_class: str) -> str:
-    sc = str(super_class).lower()
-    return ("sensory" if ("sensory" in sc or "visual" in sc or sc == "optic") else
-            "dn" if sc == "descending" else
-            "motor" if sc == "motor" else "inter")
-
-
 def main() -> None:
     # --- neuron set: not outlier-flagged + known superclass ---------------
     an = pd.read_csv(DATA / ANNOT, sep="\t", low_memory=False)
     status_counts = an["status"].value_counts(dropna=False)
     print("annotation status vocabulary:")
     print(status_counts.to_string())
-    keep = an["status"].isna() & an["super_class"].notna()
+    status_rep = vocab.VocabReport("flywire status (drop filter)")
+    keep_status = vocab.flywire_status_classifier(status_rep)
+    keep = (an["status"].astype(object).map(keep_status).astype(bool)
+            & an["super_class"].notna())
     neurons = an[keep].copy()
     # NOTE: FlyWire root_ids are ~7.2e17 > 2^53; mixing int64 (feather) with
     # uint64 (node ids) would promote comparisons to float64 and corrupt
@@ -107,7 +105,8 @@ def main() -> None:
     neurons["eff_nt"] = nt.to_numpy()
     neurons["nt"] = nt.to_numpy()
 
-    fc = neurons["super_class"].map(func_of)
+    func_rep = vocab.VocabReport("flywire super_class -> func_class")
+    fc = neurons["super_class"].map(vocab.flywire_func_classifier(func_rep))
     neurons["func_class"] = fc
     fc_lut = fc.map({"inter": 0, "sensory": 1, "dn": 2, "motor": 3}).to_numpy(dtype=np.uint8)
     sup_lut = neurons["super_class"].to_numpy()
@@ -115,8 +114,9 @@ def main() -> None:
     sup_code = {s: i for i, s in enumerate(sup_names)}
     sup_codes = (neurons["super_class"].astype(str).map(sup_code)
                  .to_numpy(dtype=np.uint8))
-    side_codes = (neurons["side"].astype("string").str.lower()
-                  .map(SIDE).fillna(0).to_numpy(dtype=np.uint8))
+    side_rep = vocab.VocabReport("flywire side -> side_code")
+    side_codes = (neurons["side"].map(vocab.flywire_side_classifier(side_rep))
+                  .to_numpy(dtype=np.uint8))
     type_names = sorted(str(t) for t in neurons["cell_type"].dropna().unique())
     type_code = {t: i for i, t in enumerate(type_names)}
     type_codes = (neurons["cell_type"]
@@ -129,6 +129,11 @@ def main() -> None:
     n_unknown_nt = int(neurons["eff_nt"].isna().sum())
     print(f"  transmitter: known: {n_ids - n_unknown_nt}, unknown "
           f"(no outgoing edges): {n_unknown_nt} (motor among them: {n_motor_unknown})")
+
+    # Loud vocabulary gate: unmapped raw values are echoed above; strict
+    # mode (VOCAB_STRICT=1 / --strict) refuses to build an artifact from
+    # unrecognized vocabulary.
+    vocab.finish([status_rep, func_rep, side_rep])
 
     # --- aggregate connections feather to (pre, post) pairs ----------------
     conn = feather.read_table(
@@ -222,9 +227,10 @@ def main() -> None:
             "keep_status_rule": "status is NaN (this TSV flags problem segments "
                                 "as outlier_seg/outlier_bio; no positive curation "
                                 "vocabulary like MaleCNS KEEP_STATUS)",
-            "func_class_rule": "sensory <- super_class contains 'sensory'/'visual' "
-                               "or == 'optic'; dn <- 'descending'; motor <- 'motor'; "
-                               "else inter",
+            "func_class_rule": "explicit sets in bridge/vocab.py (sensory: "
+                               "sensory/optic/visual_projection/visual_centrifugal/"
+                               "sensory_ascending; dn: descending; motor: motor; "
+                               "else inter; unmapped -> inter + loud report)",
             "side_rule": "TSV side: left->1 right->2 center->3(m midline); na/none->0",
             "nt_rule": "top_nt lowercased; no motor default; unknown -> keep node, "
                        "drop outgoing edges",

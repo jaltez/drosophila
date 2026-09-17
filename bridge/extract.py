@@ -26,6 +26,10 @@ Weight model (v1):  w_fp = clamp(round(sign_mult * 512 * log2(1 + syn_count)))
   sign_mult: acetylcholine +1, gaba -1, glutamate -1, histamine -1 (insect
   photoreceptor histamine gates Cl-), modulators (dopamine/serotonin/
   octopamine/tyramine) +0.5 (assumption, tunable).
+
+Vocabulary (status, superclass, side, sign) is shared with extract_flywire.py
+via bridge/vocab.py; unmapped values are reported loudly and fail the run
+under --strict / VOCAB_STRICT=1.
 """
 import hashlib
 import json
@@ -35,30 +39,15 @@ import numpy as np
 import pandas as pd
 import pyarrow.feather as feather
 
+import vocab
+from vocab import KEEP_STATUS, MOTOR_DEFAULT_NT, SCALE, SIGN
+
 DATA = Path(__file__).parent / "data"
 OUT = Path(__file__).parent / "out"
 
 ANNOT = "body-annotations-male-cns-v1.0-minconf-0.5.feather"
 NTFILE = "body-neurotransmitters-male-cns-v1.0.feather"
 WFILE = "connectome-weights-male-cns-v1.0-minconf-0.5.feather"
-
-# Statuses that identify a segment worth simulating (MaleCNS vocabulary).
-KEEP_STATUS = {
-    "Reviewed", "Roughly traced", "Prelim Roughly traced", "RT Hard to trace",
-    "Hard to trace", "Partially traced", "0.5assign",
-    "Anchor", "Soma Anchor", "Sensory Anchor",
-}
-SEN = {"ol_sensory", "cb_sensory", "vnc_sensory", "cb_sensory_tbc",
-       "vnc_sensory_tbc", "sensory_ascending", "sensory_ascending_tbc",
-       "sensory_descending"}
-DN = {"descending_neuron", "descending_neuron_tbc", "efferent_descending"}
-MN = {"vnc_motor", "cb_motor", "vnc_efferent", "cb_efferent", "vnc_tbc"}
-# Motor neurons are glutamatergic even when the predictor returns 'unclear'.
-MOTOR_DEFAULT_NT = {"vnc_motor", "cb_motor"}
-
-SIGN = {"acetylcholine": 1.0, "gaba": -1.0, "glutamate": -1.0, "histamine": -1.0,
-        "dopamine": 0.5, "serotonin": 0.5, "octopamine": 0.5, "tyramine": 0.5}
-SCALE = 512  # fixed-point scale for i16 weights
 
 
 def sha256(path: Path) -> str:
@@ -82,19 +71,19 @@ def main() -> None:
                  "celltype_predicted_nt"],
     ).to_pandas()
 
-    neurons = an[an.statusLabel.isin(KEEP_STATUS) & an.superclass.notna()].copy()
+    status_rep = vocab.VocabReport("malecns statusLabel (drop filter)")
+    keep_status = vocab.malecns_status_classifier(status_rep)
+    neurons = an[an.statusLabel.astype(object).map(keep_status).astype(bool)
+                 & an.superclass.notna()].copy()
     neurons = neurons.merge(nt, left_on="bodyId", right_on="body", how="left")
     neurons["nt"] = neurons.predicted_nt.where(
         neurons.predicted_nt != "unclear", neurons.celltype_predicted_nt)
     neurons.loc[neurons.nt == "unclear", "nt"] = None
     neurons["nt_conf"] = neurons.predicted_nt_confidence
 
-    def fn(sc):
-        return ("sensory" if sc in SEN else
-                "dn" if sc in DN else
-                "motor" if sc in MN else "inter")
-
-    neurons["func_class"] = neurons.superclass.map(fn)
+    func_rep = vocab.VocabReport("malecns superclass -> func_class")
+    neurons["func_class"] = neurons.superclass.map(
+        vocab.malecns_func_classifier(func_rep))
     motor_defaulted = neurons.nt.isna() & neurons.superclass.isin(MOTOR_DEFAULT_NT)
     neurons["eff_nt"] = neurons.nt
     neurons.loc[motor_defaulted, "eff_nt"] = "glutamate"
@@ -116,12 +105,21 @@ def main() -> None:
     sup_code = {s: i for i, s in enumerate(sup_names)}
     sup_codes = recs.loc[ids].superclass.map(sup_code).to_numpy(dtype=np.uint8)
     # somaSide, falling back to rootSide (ORNs and many sensory neurons have
-    # no soma annotation but a segmented root side: L/R of their entry)
-    ss = neurons.somaSide.where(
-        neurons.somaSide.isin(["L", "R", "midline"]), neurons.rootSide)
-    ss = ss.where(ss.isin(["L", "R", "midline"]), None)
-    side_codes = (ss.fillna("none").map(
-        {"none": 0, "L": 1, "R": 2, "midline": 3}).to_numpy(dtype=np.uint8))
+    # no soma annotation but a segmented root side: L/R of their entry).
+    # NOTE: v1.0 writes midline somas as "M", which matches neither key, so
+    # those rows fall through to rootSide/0 exactly as before and are counted
+    # in side_rep (deliberate vocabulary miss, kept for byte-identical output).
+    side_rep = vocab.VocabReport("malecns somaSide/rootSide -> side")
+    side_of = vocab.malecns_side_classifier(side_rep)
+    side_codes = np.fromiter(
+        (side_of(s, r) for s, r in zip(neurons.somaSide, neurons.rootSide)),
+        dtype=np.uint8, count=len(neurons))
+
+    # Loud vocabulary gate: unmapped raw values are echoed below; strict
+    # mode (VOCAB_STRICT=1 / --strict) refuses to build an artifact from
+    # unrecognized vocabulary.
+    vocab.finish([status_rep, func_rep, side_rep])
+
     nerve_names = sorted(
         str(n) for n in neurons.entryNerve.fillna("none").unique())
     nerve_code = {n: i for i, n in enumerate(nerve_names)}

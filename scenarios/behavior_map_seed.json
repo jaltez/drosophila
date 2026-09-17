@@ -1,0 +1,2586 @@
+{
+ "seeds": {
+  "DNg04": {
+   "behavior": "steer",
+   "w": null,
+   "confidence": 0.94,
+   "evidence": "jev-seed (family=steering, sep=5.74)",
+   "confidence_label": "model"
+  },
+  "DNg08": {
+   "behavior": "steer",
+   "w": null,
+   "confidence": 0.98,
+   "evidence": "jev-seed (family=steering, sep=8.60)",
+   "confidence_label": "model"
+  },
+  "DNg106": {
+   "behavior": "steer",
+   "w": null,
+   "confidence": 1.0,
+   "evidence": "jev-seed (family=steering, sep=inf)",
+   "confidence_label": "model"
+  },
+  "DNg24": {
+   "behavior": "steer",
+   "w": null,
+   "confidence": 0.98,
+   "evidence": "jev-seed (family=steering, sep=12.65)",
+   "confidence_label": "model"
+  },
+  "DNg39": {
+   "behavior": "steer",
+   "w": null,
+   "confidence": 0.95,
+   "evidence": "jev-seed (family=steering, sep=6.97)",
+   "confidence_label": "model"
+  },
+  "DNg52": {
+   "behavior": "steer",
+   "w": null,
+   "confidence": 0.91,
+   "evidence": "jev-seed (family=steering, sep=4.23)",
+   "confidence_label": "model"
+  },
+  "DNg77": {
+   "behavior": "steer",
+   "w": null,
+   "confidence": 0.94,
+   "evidence": "jev-seed (family=steering, sep=6.28)",
+   "confidence_label": "model"
+  },
+  "DNg79": {
+   "behavior": "steer",
+   "w": null,
+   "confidence": 0.91,
+   "evidence": "jev-seed (family=steering, sep=4.48)",
+   "confidence_label": "model"
+  },
+  "DNge014": {
+   "behavior": "steer",
+   "w": null,
+   "confidence": 0.97,
+   "evidence": "jev-seed (family=steering, sep=8.57)",
+   "confidence_label": "model"
+  },
+  "DNge036": {
+   "behavior": "steer",
+   "w": null,
+   "confidence": 0.93,
+   "evidence": "jev-seed (family=steering, sep=23.25)",
+   "confidence_label": "model"
+  },
+  "DNge052": {
+   "behavior": "steer",
+   "w": null,
+   "confidence": 0.92,
+   "evidence": "jev-seed (family=steering, sep=18.40)",
+   "confidence_label": "model"
+  },
+  "DNge091": {
+   "behavior": "steer",
+   "w": null,
+   "confidence": 0.99,
+   "evidence": "jev-seed (family=steering, sep=12.78)",
+   "confidence_label": "model"
+  },
+  "DNge093": {
+   "behavior": "steer",
+   "w": null,
+   "confidence": 0.96,
+   "evidence": "jev-seed (family=steering, sep=6.93)",
+   "confidence_label": "model"
+  },
+  "DNge095": {
+   "behavior": "steer",
+   "w": null,
+   "confidence": 0.96,
+   "evidence": "jev-seed (family=steering, sep=7.22)",
+   "confidence_label": "model"
+  },
+  "DNge102": {
+   "behavior": "steer",
+   "w": null,
+   "confidence": 0.9,
+   "evidence": "jev-seed (family=steering, sep=4.78)",
+   "confidence_label": "model"
+  },
+  "DNge111": {
+   "behavior": "steer",
+   "w": null,
+   "confidence": 0.99,
+   "evidence": "jev-seed (family=steering, sep=12.47)",
+   "confidence_label": "model"
+  },
+  "DNge130": {
+   "behavior": "steer",
+   "w": null,
+   "confidence": 0.92,
+   "evidence": "jev-seed (family=steering, sep=18.40)",
+   "confidence_label": "model"
+  },
+  "DNge145": {
+   "behavior": "steer",
+   "w": null,
+   "confidence": 0.97,
+   "evidence": "jev-seed (family=steering, sep=8.64)",
+   "confidence_label": "model"
+  },
+  "DNge175": {
+   "behavior": "steer",
+   "w": null,
+   "confidence": 0.96,
+   "evidence": "jev-seed (family=steering, sep=8.69)",
+   "confidence_label": "model"
+  },
+  "DNge181": {
+   "behavior": "steer",
+   "w": null,
+   "confidence": 0.96,
+   "evidence": "jev-seed (family=steering, sep=8.69)",
+   "confidence_label": "model"
+  },
+  "DNp12": {
+   "behavior": "steer",
+   "w": null,
+   "confidence": 0.93,
+   "evidence": "jev-seed (family=steering, sep=5.08)",
+   "confidence_label": "model"
+  },
+  "DNp41": {
+   "behavior": "steer",
+   "w": null,
+   "confidence": 0.9400000000000001,
+   "evidence": "jev-seed (family=steering, sep=6.78)",
+   "confidence_label": "model"
+  },
+  "DNpe009": {
+   "behavior": "steer",
+   "w": null,
+   "confidence": 0.96,
+   "evidence": "jev-seed (family=steering, sep=7.28)",
+   "confidence_label": "model"
+  },
+  "DNpe033": {
+   "behavior": "steer",
+   "w": null,
+   "confidence": 0.97,
+   "evidence": "jev-seed (family=steering, sep=8.32)",
+   "confidence_label": "model"
+  },
+  "DNpe037": {
+   "behavior": "steer",
+   "w": null,
+   "confidence": 0.91,
+   "evidence": "jev-seed (family=steering, sep=5.25)",
+   "confidence_label": "model"
+  }
+ },
+ "review": {
+  "DNa03": {
+   "family_hint": "locomotion",
+   "confidence": 0.71,
+   "separation": 1.0875847015897329,
+   "has_screen": true
+  },
+  "DNa04": {
+   "family_hint": "locomotion",
+   "confidence": 0.66,
+   "separation": 1.0514169447324115,
+   "has_screen": true
+  },
+  "DNa05": {
+   "family_hint": "locomotion",
+   "confidence": 0.61,
+   "separation": 1.1774394406353288,
+   "has_screen": true
+  },
+  "DNa06": {
+   "family_hint": "locomotion",
+   "confidence": 0.67,
+   "separation": 1.2278029157808674,
+   "has_screen": true
+  },
+  "DNa07": {
+   "family_hint": "locomotion",
+   "confidence": 0.69,
+   "separation": 5.643239658755761,
+   "has_screen": true
+  },
+  "DNa08": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.5700000000000001,
+   "separation": 1.1118908983632407,
+   "has_screen": true
+  },
+  "DNa09": {
+   "family_hint": "locomotion",
+   "confidence": 0.74,
+   "separation": 85.59205570612264,
+   "has_screen": true
+  },
+  "DNa10": {
+   "family_hint": "locomotion",
+   "confidence": 0.73,
+   "separation": 13.433995020924423,
+   "has_screen": true
+  },
+  "DNa11": {
+   "family_hint": "locomotion",
+   "confidence": 0.75,
+   "separation": 6.73145600891813,
+   "has_screen": true
+  },
+  "DNa13": {
+   "family_hint": "locomotion",
+   "confidence": 0.64,
+   "separation": 6.464141394411338,
+   "has_screen": true
+  },
+  "DNa14": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.58,
+   "separation": 1.1809712954442837,
+   "has_screen": true
+  },
+  "DNa15": {
+   "family_hint": "locomotion",
+   "confidence": 0.63,
+   "separation": 1.0529957264870546,
+   "has_screen": true
+  },
+  "DNa16": {
+   "family_hint": "locomotion",
+   "confidence": 0.61,
+   "separation": 3.089371730154018,
+   "has_screen": true
+  },
+  "DNae001": {
+   "family_hint": "locomotion",
+   "confidence": 0.69,
+   "separation": 2.4224600630767155,
+   "has_screen": true
+  },
+  "DNae002": {
+   "family_hint": "locomotion",
+   "confidence": 0.68,
+   "separation": 2.55499510762741,
+   "has_screen": true
+  },
+  "DNae003": {
+   "family_hint": "locomotion",
+   "confidence": 0.7,
+   "separation": 3.2044648603662846,
+   "has_screen": true
+  },
+  "DNae004": {
+   "family_hint": "locomotion",
+   "confidence": 0.63,
+   "separation": 7.099295739719539,
+   "has_screen": true
+  },
+  "DNae005": {
+   "family_hint": "locomotion",
+   "confidence": 0.65,
+   "separation": 5.857094463601861,
+   "has_screen": true
+  },
+  "DNae006": {
+   "family_hint": "steering",
+   "confidence": 0.74,
+   "separation": 2.7426224716460745,
+   "has_screen": true
+  },
+  "DNae007": {
+   "family_hint": "steering",
+   "confidence": 0.77,
+   "separation": 2.5141391215261057,
+   "has_screen": true
+  },
+  "DNae008": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.61,
+   "separation": 1.297285200680296,
+   "has_screen": true
+  },
+  "DNae009": {
+   "family_hint": "locomotion",
+   "confidence": 0.71,
+   "separation": 7.020630755021026,
+   "has_screen": true
+  },
+  "DNae010": {
+   "family_hint": "steering",
+   "confidence": 0.73,
+   "separation": 2.2669058432625593,
+   "has_screen": true
+  },
+  "DNb01": {
+   "family_hint": "locomotion",
+   "confidence": 0.55,
+   "separation": 2.1276157950140844,
+   "has_screen": true
+  },
+  "DNb02": {
+   "family_hint": "locomotion",
+   "confidence": 0.54,
+   "separation": 6.122712087448267,
+   "has_screen": true
+  },
+  "DNb03": {
+   "family_hint": "locomotion",
+   "confidence": 0.54,
+   "separation": 7.164728420068227,
+   "has_screen": true
+  },
+  "DNb04": {
+   "family_hint": "steering",
+   "confidence": 0.68,
+   "separation": 2.122927839585173,
+   "has_screen": true
+  },
+  "DNb05": {
+   "family_hint": "locomotion",
+   "confidence": 0.69,
+   "separation": 3.786182781562673,
+   "has_screen": true
+  },
+  "DNb06": {
+   "family_hint": "steering",
+   "confidence": 0.68,
+   "separation": 2.184474725091001,
+   "has_screen": true
+  },
+  "DNb07": {
+   "family_hint": "steering",
+   "confidence": 0.68,
+   "separation": 1.9629909152447278,
+   "has_screen": true
+  },
+  "DNb08": {
+   "family_hint": "steering",
+   "confidence": 0.68,
+   "separation": 1.9812362589434211,
+   "has_screen": true
+  },
+  "DNb09": {
+   "family_hint": "locomotion",
+   "confidence": 0.6,
+   "separation": 4.3817804600413295,
+   "has_screen": true
+  },
+  "DNbe001": {
+   "family_hint": "locomotion",
+   "confidence": 0.71,
+   "separation": 6.319612329882269,
+   "has_screen": true
+  },
+  "DNbe002": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.59,
+   "separation": 1.2642212148486758,
+   "has_screen": true
+  },
+  "DNbe003": {
+   "family_hint": "locomotion",
+   "confidence": 0.61,
+   "separation": 1.3350366524571318,
+   "has_screen": true
+  },
+  "DNbe004": {
+   "family_hint": "locomotion",
+   "confidence": 0.67,
+   "separation": 19.94523752678819,
+   "has_screen": true
+  },
+  "DNbe005": {
+   "family_hint": "locomotion",
+   "confidence": 0.67,
+   "separation": 6.101001739241043,
+   "has_screen": true
+  },
+  "DNbe006": {
+   "family_hint": "locomotion",
+   "confidence": 0.69,
+   "separation": 1.8445186729735477,
+   "has_screen": true
+  },
+  "DNbe007": {
+   "family_hint": "steering",
+   "confidence": 0.78,
+   "separation": 2.5467902789485226,
+   "has_screen": true
+  },
+  "DNg03": {
+   "family_hint": "locomotion",
+   "confidence": 0.73,
+   "separation": 8.854795729287458,
+   "has_screen": true
+  },
+  "DNg06": {
+   "family_hint": "steering",
+   "confidence": 0.62,
+   "separation": 1.4065503696480903,
+   "has_screen": true
+  },
+  "DNg10": {
+   "family_hint": "locomotion",
+   "confidence": 0.71,
+   "separation": 5.516209878945091,
+   "has_screen": true
+  },
+  "DNg100": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.56,
+   "separation": 1.1576575228326125,
+   "has_screen": true
+  },
+  "DNg101": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.59,
+   "separation": 1.1672303176671728,
+   "has_screen": true
+  },
+  "DNg102": {
+   "family_hint": "locomotion",
+   "confidence": 0.71,
+   "separation": 9.824236611564277,
+   "has_screen": true
+  },
+  "DNg103": {
+   "family_hint": "steering",
+   "confidence": 0.63,
+   "separation": 1.3840305417658023,
+   "has_screen": true
+  },
+  "DNg104": {
+   "family_hint": "steering",
+   "confidence": 0.77,
+   "separation": 2.730908573207848,
+   "has_screen": true
+  },
+  "DNg105": {
+   "family_hint": "steering",
+   "confidence": 0.71,
+   "separation": 3.944444444444444,
+   "has_screen": true
+  },
+  "DNg107": {
+   "family_hint": "locomotion",
+   "confidence": 0.61,
+   "separation": 1.2654050734843763,
+   "has_screen": true
+  },
+  "DNg108": {
+   "family_hint": "steering",
+   "confidence": 0.79,
+   "separation": 6.076923076923077,
+   "has_screen": true
+  },
+  "DNg109": {
+   "family_hint": "steering",
+   "confidence": 0.62,
+   "separation": 1.4364326301709596,
+   "has_screen": true
+  },
+  "DNg11": {
+   "family_hint": "steering",
+   "confidence": 0.64,
+   "separation": 1.7373609273532902,
+   "has_screen": true
+  },
+  "DNg110": {
+   "family_hint": "steering",
+   "confidence": 0.64,
+   "separation": 1.8921996671650643,
+   "has_screen": true
+  },
+  "DNg111": {
+   "family_hint": "steering",
+   "confidence": 0.48,
+   "separation": 1.0562852355255876,
+   "has_screen": true
+  },
+  "DNg14": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.55,
+   "separation": 1.1129864054599854,
+   "has_screen": true
+  },
+  "DNg15": {
+   "family_hint": "locomotion",
+   "confidence": 0.72,
+   "separation": 3.698648401781386,
+   "has_screen": true
+  },
+  "DNg16": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.59,
+   "separation": 1.2361613244304155,
+   "has_screen": true
+  },
+  "DNg17": {
+   "family_hint": "locomotion",
+   "confidence": 0.68,
+   "separation": 4.5225131287813864,
+   "has_screen": true
+  },
+  "DNg19": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.63,
+   "separation": 1.449137674618944,
+   "has_screen": true
+  },
+  "DNg20": {
+   "family_hint": "locomotion",
+   "confidence": 0.67,
+   "separation": 1.0859097568398581,
+   "has_screen": true
+  },
+  "DNg21": {
+   "family_hint": "locomotion",
+   "confidence": 0.7,
+   "separation": 41.20072814890533,
+   "has_screen": true
+  },
+  "DNg22": {
+   "family_hint": "locomotion",
+   "confidence": 0.69,
+   "separation": 2.4101189741147127,
+   "has_screen": true
+  },
+  "DNg23": {
+   "family_hint": "locomotion",
+   "confidence": 0.69,
+   "separation": 1.0680426534428487,
+   "has_screen": true
+  },
+  "DNg26": {
+   "family_hint": "steering",
+   "confidence": 0.68,
+   "separation": 1.979556533114579,
+   "has_screen": true
+  },
+  "DNg27": {
+   "family_hint": "steering",
+   "confidence": 0.6,
+   "separation": 1.2862393885688161,
+   "has_screen": true
+  },
+  "DNg28": {
+   "family_hint": "steering",
+   "confidence": 0.64,
+   "separation": 1.3719886811400706,
+   "has_screen": true
+  },
+  "DNg30": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.55,
+   "separation": 1.183411578007822,
+   "has_screen": true
+  },
+  "DNg31": {
+   "family_hint": "steering",
+   "confidence": 0.84,
+   "separation": 3.4729725684978368,
+   "has_screen": true
+  },
+  "DNg32": {
+   "family_hint": "steering",
+   "confidence": 0.67,
+   "separation": 1.9537596757913445,
+   "has_screen": true
+  },
+  "DNg33": {
+   "family_hint": "locomotion",
+   "confidence": 0.69,
+   "separation": 1.591398277130616,
+   "has_screen": true
+  },
+  "DNg34": {
+   "family_hint": "locomotion",
+   "confidence": 0.6,
+   "separation": 1.0327955589886444,
+   "has_screen": true
+  },
+  "DNg35": {
+   "family_hint": "steering",
+   "confidence": 0.71,
+   "separation": 1.7094791138179226,
+   "has_screen": true
+  },
+  "DNg37": {
+   "family_hint": "steering",
+   "confidence": 0.89,
+   "separation": 4.770900780028187,
+   "has_screen": true
+  },
+  "DNg38": {
+   "family_hint": "steering",
+   "confidence": 0.76,
+   "separation": 2.172315411805112,
+   "has_screen": true
+  },
+  "DNg40": {
+   "family_hint": "locomotion",
+   "confidence": 0.6,
+   "separation": 14.696938456699069,
+   "has_screen": true
+  },
+  "DNg41": {
+   "family_hint": "steering",
+   "confidence": 0.74,
+   "separation": 2.3566400946043835,
+   "has_screen": true
+  },
+  "DNg42": {
+   "family_hint": "locomotion",
+   "confidence": 0.58,
+   "separation": 1.1082895763851461,
+   "has_screen": true
+  },
+  "DNg43": {
+   "family_hint": "steering",
+   "confidence": 0.5,
+   "separation": 1.141088661469096,
+   "has_screen": true
+  },
+  "DNg44": {
+   "family_hint": "steering",
+   "confidence": 0.75,
+   "separation": 2.5055741429289786,
+   "has_screen": true
+  },
+  "DNg45": {
+   "family_hint": "steering",
+   "confidence": 0.72,
+   "separation": 2.496150883013531,
+   "has_screen": true
+  },
+  "DNg46": {
+   "family_hint": "locomotion",
+   "confidence": 0.63,
+   "separation": 5.689903338370521,
+   "has_screen": true
+  },
+  "DNg47": {
+   "family_hint": "steering",
+   "confidence": 0.78,
+   "separation": 2.4375,
+   "has_screen": true
+  },
+  "DNg48": {
+   "family_hint": "locomotion",
+   "confidence": 0.71,
+   "separation": 27.519689920733725,
+   "has_screen": true
+  },
+  "DNg49": {
+   "family_hint": "steering",
+   "confidence": 0.54,
+   "separation": 1.275630096406142,
+   "has_screen": true
+  },
+  "DNg50": {
+   "family_hint": "locomotion",
+   "confidence": 0.7,
+   "separation": 40.98780306383839,
+   "has_screen": true
+  },
+  "DNg51": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.6,
+   "separation": 1.3470397652008117,
+   "has_screen": true
+  },
+  "DNg53": {
+   "family_hint": "locomotion",
+   "confidence": 0.68,
+   "separation": 19.880895352071043,
+   "has_screen": true
+  },
+  "DNg54": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.54,
+   "separation": 1.0865389093904707,
+   "has_screen": true
+  },
+  "DNg55": {
+   "family_hint": "steering",
+   "confidence": 0.84,
+   "separation": 3.2427840332251687,
+   "has_screen": true
+  },
+  "DNg56": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.55,
+   "separation": 1.1518482478021628,
+   "has_screen": true
+  },
+  "DNg57": {
+   "family_hint": "locomotion",
+   "confidence": 0.71,
+   "separation": 41.27953488110059,
+   "has_screen": true
+  },
+  "DNg58": {
+   "family_hint": "locomotion",
+   "confidence": 0.69,
+   "separation": 20.24073862288627,
+   "has_screen": true
+  },
+  "DNg59": {
+   "family_hint": "locomotion",
+   "confidence": 0.7,
+   "separation": 40.98780306383839,
+   "has_screen": true
+  },
+  "DNg60": {
+   "family_hint": "steering",
+   "confidence": 0.65,
+   "separation": 1.4083920175566784,
+   "has_screen": true
+  },
+  "DNg61": {
+   "family_hint": "steering",
+   "confidence": 0.71,
+   "separation": 4.1764705882352935,
+   "has_screen": true
+  },
+  "DNg62": {
+   "family_hint": "steering",
+   "confidence": 0.64,
+   "separation": 1.3641745802223602,
+   "has_screen": true
+  },
+  "DNg63": {
+   "family_hint": "steering",
+   "confidence": 0.89,
+   "separation": 3.8158435194208216,
+   "has_screen": true
+  },
+  "DNg64": {
+   "family_hint": "steering",
+   "confidence": 0.56,
+   "separation": 1.4178351139171335,
+   "has_screen": true
+  },
+  "DNg65": {
+   "family_hint": "locomotion",
+   "confidence": 0.68,
+   "separation": 4.792586868163048,
+   "has_screen": true
+  },
+  "DNg66": {
+   "family_hint": "steering",
+   "confidence": 0.78,
+   "separation": 2.626396615835748,
+   "has_screen": true
+  },
+  "DNg67": {
+   "family_hint": "steering",
+   "confidence": 0.6,
+   "separation": 1.2760182301773402,
+   "has_screen": true
+  },
+  "DNg68": {
+   "family_hint": "locomotion",
+   "confidence": 0.75,
+   "separation": 13.84437310486346,
+   "has_screen": true
+  },
+  "DNg69": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.65,
+   "separation": 1.52362350055011,
+   "has_screen": true
+  },
+  "DNg70": {
+   "family_hint": "locomotion",
+   "confidence": 0.68,
+   "separation": 6.952019743383695,
+   "has_screen": true
+  },
+  "DNg71": {
+   "family_hint": "locomotion",
+   "confidence": 0.68,
+   "separation": 5.301135804365563,
+   "has_screen": true
+  },
+  "DNg72": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.6,
+   "separation": 1.28564869306645,
+   "has_screen": true
+  },
+  "DNg73": {
+   "family_hint": "locomotion",
+   "confidence": 0.69,
+   "separation": 26.987651497181695,
+   "has_screen": true
+  },
+  "DNg75": {
+   "family_hint": "steering",
+   "confidence": 0.83,
+   "separation": 3.067768274461477,
+   "has_screen": true
+  },
+  "DNg76": {
+   "family_hint": "steering",
+   "confidence": 0.55,
+   "separation": 1.4493772609105073,
+   "has_screen": true
+  },
+  "DNg78": {
+   "family_hint": "locomotion",
+   "confidence": 0.67,
+   "separation": 1.4613777745675482,
+   "has_screen": true
+  },
+  "DNg80": {
+   "family_hint": "locomotion",
+   "confidence": 0.61,
+   "separation": 2.277702498003229,
+   "has_screen": true
+  },
+  "DNg81": {
+   "family_hint": "steering",
+   "confidence": 0.71,
+   "separation": 1.7953121678558162,
+   "has_screen": true
+  },
+  "DNg82": {
+   "family_hint": "locomotion",
+   "confidence": 0.63,
+   "separation": 1.1550732508702781,
+   "has_screen": true
+  },
+  "DNg83": {
+   "family_hint": "locomotion",
+   "confidence": 0.71,
+   "separation": 2.1065374432940898,
+   "has_screen": true
+  },
+  "DNg84": {
+   "family_hint": "locomotion",
+   "confidence": 0.67,
+   "separation": 1.040140173323517,
+   "has_screen": true
+  },
+  "DNg85": {
+   "family_hint": "steering",
+   "confidence": 0.68,
+   "separation": 1.64153546858991,
+   "has_screen": true
+  },
+  "DNg86": {
+   "family_hint": "locomotion",
+   "confidence": 0.68,
+   "separation": 1.284844911372961,
+   "has_screen": true
+  },
+  "DNg87": {
+   "family_hint": "locomotion",
+   "confidence": 0.69,
+   "separation": 1.2510864843424485,
+   "has_screen": true
+  },
+  "DNg88": {
+   "family_hint": "locomotion",
+   "confidence": 0.73,
+   "separation": 4.806002106741111,
+   "has_screen": true
+  },
+  "DNg89": {
+   "family_hint": "locomotion",
+   "confidence": 0.69,
+   "separation": 82.64986388373546,
+   "has_screen": true
+  },
+  "DNg90": {
+   "family_hint": "locomotion",
+   "confidence": 0.54,
+   "separation": 7.348469228349535,
+   "has_screen": true
+  },
+  "DNg91": {
+   "family_hint": "steering",
+   "confidence": 0.65,
+   "separation": 1.6941796142137326,
+   "has_screen": true
+  },
+  "DNg93": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.63,
+   "separation": 1.3948434447256501,
+   "has_screen": true
+  },
+  "DNg94": {
+   "family_hint": "locomotion",
+   "confidence": 0.58,
+   "separation": 2.7504940267712534,
+   "has_screen": true
+  },
+  "DNg95": {
+   "family_hint": "steering",
+   "confidence": 0.76,
+   "separation": 2.6098507150250914,
+   "has_screen": true
+  },
+  "DNg96": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.59,
+   "separation": 1.2838227126732715,
+   "has_screen": true
+  },
+  "DNg97": {
+   "family_hint": "steering",
+   "confidence": 0.61,
+   "separation": 1.2415413890452909,
+   "has_screen": true
+  },
+  "DNg98": {
+   "family_hint": "locomotion",
+   "confidence": 0.7,
+   "separation": 1.6268389404829244,
+   "has_screen": true
+  },
+  "DNg99": {
+   "family_hint": "locomotion",
+   "confidence": 0.67,
+   "separation": 1.1668466869843166,
+   "has_screen": true
+  },
+  "DNge001": {
+   "family_hint": "locomotion",
+   "confidence": 0.77,
+   "separation": 42.988370520409354,
+   "has_screen": true
+  },
+  "DNge002": {
+   "family_hint": "locomotion",
+   "confidence": 0.71,
+   "separation": 7.904429138147801,
+   "has_screen": true
+  },
+  "DNge003": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.58,
+   "separation": 1.224380959670172,
+   "has_screen": true
+  },
+  "DNge004": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.59,
+   "separation": 1.2183739032074914,
+   "has_screen": true
+  },
+  "DNge006": {
+   "family_hint": "steering",
+   "confidence": 0.67,
+   "separation": 2.1103016409681854,
+   "has_screen": true
+  },
+  "DNge007": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.6,
+   "separation": 1.276306889434551,
+   "has_screen": true
+  },
+  "DNge008": {
+   "family_hint": "locomotion",
+   "confidence": 0.7,
+   "separation": 3.0866503216171908,
+   "has_screen": true
+  },
+  "DNge009": {
+   "family_hint": "locomotion",
+   "confidence": 0.72,
+   "separation": 10.11805317242403,
+   "has_screen": true
+  },
+  "DNge010": {
+   "family_hint": "locomotion",
+   "confidence": 0.68,
+   "separation": 7.77946013551069,
+   "has_screen": true
+  },
+  "DNge011": {
+   "family_hint": "steering",
+   "confidence": 0.77,
+   "separation": 2.2008985093288636,
+   "has_screen": true
+  },
+  "DNge012": {
+   "family_hint": "locomotion",
+   "confidence": 0.73,
+   "separation": 7.969316156358712,
+   "has_screen": true
+  },
+  "DNge013": {
+   "family_hint": "steering",
+   "confidence": 0.73,
+   "separation": 2.453868155902772,
+   "has_screen": true
+  },
+  "DNge015": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.56,
+   "separation": 1.150792911137501,
+   "has_screen": true
+  },
+  "DNge017": {
+   "family_hint": "steering",
+   "confidence": 0.66,
+   "separation": 1.5015519921378573,
+   "has_screen": true
+  },
+  "DNge018": {
+   "family_hint": "steering",
+   "confidence": 0.76,
+   "separation": 5.428571428571428,
+   "has_screen": true
+  },
+  "DNge019": {
+   "family_hint": "locomotion",
+   "confidence": 0.71,
+   "separation": 20.531987239427167,
+   "has_screen": true
+  },
+  "DNge020": {
+   "family_hint": "locomotion",
+   "confidence": 0.69,
+   "separation": 6.419371724190252,
+   "has_screen": true
+  },
+  "DNge021": {
+   "family_hint": "locomotion",
+   "confidence": 0.69,
+   "separation": 40.905378619443184,
+   "has_screen": true
+  },
+  "DNge022": {
+   "family_hint": "locomotion",
+   "confidence": 0.69,
+   "separation": 82.23138087129512,
+   "has_screen": true
+  },
+  "DNge023": {
+   "family_hint": "steering",
+   "confidence": 0.74,
+   "separation": 1.899309908655578,
+   "has_screen": true
+  },
+  "DNge024": {
+   "family_hint": "locomotion",
+   "confidence": 0.72,
+   "separation": 7.19503961360341,
+   "has_screen": true
+  },
+  "DNge025": {
+   "family_hint": "locomotion",
+   "confidence": 0.74,
+   "separation": 13.826303434637426,
+   "has_screen": true
+  },
+  "DNge026": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.6,
+   "separation": 1.3264730648561456,
+   "has_screen": true
+  },
+  "DNge027": {
+   "family_hint": "locomotion",
+   "confidence": 0.74,
+   "separation": 16.591564121564907,
+   "has_screen": true
+  },
+  "DNge028": {
+   "family_hint": "locomotion",
+   "confidence": 0.7,
+   "separation": 20.279299790673246,
+   "has_screen": true
+  },
+  "DNge029": {
+   "family_hint": "locomotion",
+   "confidence": 0.73,
+   "separation": 16.47907764409161,
+   "has_screen": true
+  },
+  "DNge030": {
+   "family_hint": "locomotion",
+   "confidence": 0.73,
+   "separation": 41.856899072912704,
+   "has_screen": true
+  },
+  "DNge031": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.54,
+   "separation": 1.0545748652670845,
+   "has_screen": true
+  },
+  "DNge032": {
+   "family_hint": "steering",
+   "confidence": 0.84,
+   "separation": 2.9624515866061127,
+   "has_screen": true
+  },
+  "DNge033": {
+   "family_hint": "locomotion",
+   "confidence": 0.7,
+   "separation": 82.82511696339462,
+   "has_screen": true
+  },
+  "DNge034": {
+   "family_hint": "steering",
+   "confidence": 0.6,
+   "separation": 1.3852712896188304,
+   "has_screen": true
+  },
+  "DNge035": {
+   "family_hint": "steering",
+   "confidence": 0.76,
+   "separation": 5.846153846153846,
+   "has_screen": true
+  },
+  "DNge037": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.57,
+   "separation": 1.1950447138629867,
+   "has_screen": true
+  },
+  "DNge038": {
+   "family_hint": "steering",
+   "confidence": 0.76,
+   "separation": 2.338738328607322,
+   "has_screen": true
+  },
+  "DNge039": {
+   "family_hint": "steering",
+   "confidence": 0.64,
+   "separation": 1.3867244480558063,
+   "has_screen": true
+  },
+  "DNge040": {
+   "family_hint": "steering",
+   "confidence": 0.68,
+   "separation": 1.946834336667152,
+   "has_screen": true
+  },
+  "DNge041": {
+   "family_hint": "locomotion",
+   "confidence": 0.69,
+   "separation": 5.0146452184243975,
+   "has_screen": true
+  },
+  "DNge042": {
+   "family_hint": "steering",
+   "confidence": 0.85,
+   "separation": 3.212698020578432,
+   "has_screen": true
+  },
+  "DNge043": {
+   "family_hint": "locomotion",
+   "confidence": 0.65,
+   "separation": 1.661079068999844,
+   "has_screen": true
+  },
+  "DNge044": {
+   "family_hint": "locomotion",
+   "confidence": 0.69,
+   "separation": 1.66477270041418,
+   "has_screen": true
+  },
+  "DNge045": {
+   "family_hint": "locomotion",
+   "confidence": 0.7,
+   "separation": 40.98780306383839,
+   "has_screen": true
+  },
+  "DNge046": {
+   "family_hint": "locomotion",
+   "confidence": 0.71,
+   "separation": 3.672873534441391,
+   "has_screen": true
+  },
+  "DNge047": {
+   "family_hint": "locomotion",
+   "confidence": 0.71,
+   "separation": 83.83913167489271,
+   "has_screen": true
+  },
+  "DNge048": {
+   "family_hint": "steering",
+   "confidence": 0.65,
+   "separation": 1.8041639903734492,
+   "has_screen": true
+  },
+  "DNge049": {
+   "family_hint": "steering",
+   "confidence": 0.83,
+   "separation": 7.545454545454545,
+   "has_screen": true
+  },
+  "DNge050": {
+   "family_hint": "steering",
+   "confidence": 0.5,
+   "separation": 1.1002971203391538,
+   "has_screen": true
+  },
+  "DNge051": {
+   "family_hint": "steering",
+   "confidence": 0.7,
+   "separation": 4.117647058823529,
+   "has_screen": true
+  },
+  "DNge053": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.56,
+   "separation": 1.1488539158071056,
+   "has_screen": true
+  },
+  "DNge054": {
+   "family_hint": "steering",
+   "confidence": 0.82,
+   "separation": 2.6193939164997535,
+   "has_screen": true
+  },
+  "DNge056": {
+   "family_hint": "locomotion",
+   "confidence": 0.7,
+   "separation": 3.108011478375916,
+   "has_screen": true
+  },
+  "DNge057": {
+   "family_hint": "steering",
+   "confidence": 0.54,
+   "separation": 1.0132919438050823,
+   "has_screen": true
+  },
+  "DNge058": {
+   "family_hint": "steering",
+   "confidence": 0.77,
+   "separation": 5.5,
+   "has_screen": true
+  },
+  "DNge059": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.59,
+   "separation": 1.209382090993912,
+   "has_screen": true
+  },
+  "DNge060": {
+   "family_hint": "locomotion",
+   "confidence": 0.71,
+   "separation": 7.904429138147801,
+   "has_screen": true
+  },
+  "DNge061": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.54,
+   "separation": 1.11846557880216,
+   "has_screen": true
+  },
+  "DNge062": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.62,
+   "separation": 1.3594399299258952,
+   "has_screen": true
+  },
+  "DNge063": {
+   "family_hint": "locomotion",
+   "confidence": 0.71,
+   "separation": 1.4327320365076555,
+   "has_screen": true
+  },
+  "DNge064": {
+   "family_hint": "locomotion",
+   "confidence": 0.69,
+   "separation": 9.850444152422773,
+   "has_screen": true
+  },
+  "DNge065": {
+   "family_hint": "locomotion",
+   "confidence": 0.72,
+   "separation": 13.490737563232042,
+   "has_screen": true
+  },
+  "DNge067": {
+   "family_hint": "locomotion",
+   "confidence": 0.72,
+   "separation": 27.568097504180443,
+   "has_screen": true
+  },
+  "DNge068": {
+   "family_hint": "locomotion",
+   "confidence": 0.72,
+   "separation": 84.42748367682174,
+   "has_screen": true
+  },
+  "DNge069": {
+   "family_hint": "locomotion",
+   "confidence": 0.75,
+   "separation": 28.136571693556885,
+   "has_screen": true
+  },
+  "DNge070": {
+   "family_hint": "steering",
+   "confidence": 0.52,
+   "separation": 1.2582281880891508,
+   "has_screen": true
+  },
+  "DNge071": {
+   "family_hint": "locomotion",
+   "confidence": 0.72,
+   "separation": 41.569219381653056,
+   "has_screen": true
+  },
+  "DNge072": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.5700000000000001,
+   "separation": 1.196887497862553,
+   "has_screen": true
+  },
+  "DNge073": {
+   "family_hint": "steering",
+   "confidence": 0.7,
+   "separation": 2.1300321680756458,
+   "has_screen": true
+  },
+  "DNge074": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.57,
+   "separation": 1.1783299785974803,
+   "has_screen": true
+  },
+  "DNge075": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.53,
+   "separation": 1.0608490189587023,
+   "has_screen": true
+  },
+  "DNge076": {
+   "family_hint": "locomotion",
+   "confidence": 0.74,
+   "separation": 10.144271782636741,
+   "has_screen": true
+  },
+  "DNge077": {
+   "family_hint": "steering",
+   "confidence": 0.8,
+   "separation": 2.6519741765271836,
+   "has_screen": true
+  },
+  "DNge078": {
+   "family_hint": "steering",
+   "confidence": 0.66,
+   "separation": 1.4802523032536468,
+   "has_screen": true
+  },
+  "DNge079": {
+   "family_hint": "steering",
+   "confidence": 0.51,
+   "separation": 1.3365631668204458,
+   "has_screen": true
+  },
+  "DNge080": {
+   "family_hint": "locomotion",
+   "confidence": 0.64,
+   "separation": 1.1055415967851334,
+   "has_screen": true
+  },
+  "DNge081": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.53,
+   "separation": 1.0162286102227658,
+   "has_screen": true
+  },
+  "DNge082": {
+   "family_hint": "locomotion",
+   "confidence": 0.71,
+   "separation": 27.375982985902887,
+   "has_screen": true
+  },
+  "DNge083": {
+   "family_hint": "locomotion",
+   "confidence": 0.68,
+   "separation": 2.0945397523545712,
+   "has_screen": true
+  },
+  "DNge084": {
+   "family_hint": "steering",
+   "confidence": 0.52,
+   "separation": 1.2903583341622094,
+   "has_screen": true
+  },
+  "DNge085": {
+   "family_hint": "locomotion",
+   "confidence": 0.66,
+   "separation": 1.700771105140786,
+   "has_screen": true
+  },
+  "DNge086": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.59,
+   "separation": 1.2275693084003065,
+   "has_screen": true
+  },
+  "DNge087": {
+   "family_hint": "locomotion",
+   "confidence": 0.68,
+   "separation": 11.29926853330582,
+   "has_screen": true
+  },
+  "DNge088": {
+   "family_hint": "locomotion",
+   "confidence": 0.62,
+   "separation": 6.24036447335655,
+   "has_screen": true
+  },
+  "DNge089": {
+   "family_hint": "locomotion",
+   "confidence": 0.63,
+   "separation": 2.3843051907429027,
+   "has_screen": true
+  },
+  "DNge090": {
+   "family_hint": "steering",
+   "confidence": 0.86,
+   "separation": 3.426322013425262,
+   "has_screen": true
+  },
+  "DNge092": {
+   "family_hint": "steering",
+   "confidence": 0.7,
+   "separation": 1.71601618245911,
+   "has_screen": true
+  },
+  "DNge094": {
+   "family_hint": "locomotion",
+   "confidence": 0.6,
+   "separation": 8.821139382188676,
+   "has_screen": true
+  },
+  "DNge096": {
+   "family_hint": "locomotion",
+   "confidence": 0.67,
+   "separation": 81.44323176298937,
+   "has_screen": true
+  },
+  "DNge097": {
+   "family_hint": "steering",
+   "confidence": 0.55,
+   "separation": 1.1610509100320598,
+   "has_screen": true
+  },
+  "DNge098": {
+   "family_hint": "steering",
+   "confidence": 0.8,
+   "separation": 2.373563316387707,
+   "has_screen": true
+  },
+  "DNge099": {
+   "family_hint": "locomotion",
+   "confidence": 0.56,
+   "separation": 1.386568144689801,
+   "has_screen": true
+  },
+  "DNge100": {
+   "family_hint": "locomotion",
+   "confidence": 0.6,
+   "separation": 5.986094998689325,
+   "has_screen": true
+  },
+  "DNge101": {
+   "family_hint": "locomotion",
+   "confidence": 0.66,
+   "separation": 80.83316151184488,
+   "has_screen": true
+  },
+  "DNge103": {
+   "family_hint": "steering",
+   "confidence": 0.72,
+   "separation": 2.354651784603823,
+   "has_screen": true
+  },
+  "DNge104": {
+   "family_hint": "steering",
+   "confidence": 0.83,
+   "separation": 2.8335732792955133,
+   "has_screen": true
+  },
+  "DNge105": {
+   "family_hint": "steering",
+   "confidence": 0.79,
+   "separation": 2.2920224700833547,
+   "has_screen": true
+  },
+  "DNge106": {
+   "family_hint": "locomotion",
+   "confidence": 0.65,
+   "separation": 80.21845174272562,
+   "has_screen": true
+  },
+  "DNge107": {
+   "family_hint": "steering",
+   "confidence": 0.63,
+   "separation": 1.4332996288588638,
+   "has_screen": true
+  },
+  "DNge108": {
+   "family_hint": "steering",
+   "confidence": 0.8,
+   "separation": 2.542566904654913,
+   "has_screen": true
+  },
+  "DNge110": {
+   "family_hint": "locomotion",
+   "confidence": 0.63,
+   "separation": 2.04939015319192,
+   "has_screen": true
+  },
+  "DNge113": {
+   "family_hint": "locomotion",
+   "confidence": 0.66,
+   "separation": 1.0276186062932104,
+   "has_screen": true
+  },
+  "DNge114": {
+   "family_hint": "locomotion",
+   "confidence": 0.69,
+   "separation": 82.64986388373546,
+   "has_screen": true
+  },
+  "DNge115": {
+   "family_hint": "locomotion",
+   "confidence": 0.66,
+   "separation": 5.318431562567509,
+   "has_screen": true
+  },
+  "DNge116": {
+   "family_hint": "locomotion",
+   "confidence": 0.72,
+   "separation": 7.914543574963751,
+   "has_screen": true
+  },
+  "DNge117": {
+   "family_hint": "steering",
+   "confidence": 0.62,
+   "separation": 1.6338434577536627,
+   "has_screen": true
+  },
+  "DNge119": {
+   "family_hint": "locomotion",
+   "confidence": 0.6,
+   "separation": 6.928203230275509,
+   "has_screen": true
+  },
+  "DNge120": {
+   "family_hint": "steering",
+   "confidence": 0.5599999999999999,
+   "separation": 1.3318241836325833,
+   "has_screen": true
+  },
+  "DNge121": {
+   "family_hint": "locomotion",
+   "confidence": 0.7,
+   "separation": 82.82511696339462,
+   "has_screen": true
+  },
+  "DNge122": {
+   "family_hint": "steering",
+   "confidence": 0.66,
+   "separation": 1.5125525200965486,
+   "has_screen": true
+  },
+  "DNge123": {
+   "family_hint": "steering",
+   "confidence": 0.8,
+   "separation": 2.760262237369417,
+   "has_screen": true
+  },
+  "DNge124": {
+   "family_hint": "steering",
+   "confidence": 0.83,
+   "separation": 2.9002547149306404,
+   "has_screen": true
+  },
+  "DNge125": {
+   "family_hint": "locomotion",
+   "confidence": 0.66,
+   "separation": 80.4238770515324,
+   "has_screen": true
+  },
+  "DNge126": {
+   "family_hint": "steering",
+   "confidence": 0.56,
+   "separation": 1.3424972441590757,
+   "has_screen": true
+  },
+  "DNge127": {
+   "family_hint": "steering",
+   "confidence": 0.48,
+   "separation": 1.1141720290623112,
+   "has_screen": true
+  },
+  "DNge128": {
+   "family_hint": "locomotion",
+   "confidence": 0.62,
+   "separation": 3.0995867493149674,
+   "has_screen": true
+  },
+  "DNge129": {
+   "family_hint": "locomotion",
+   "confidence": 0.67,
+   "separation": 15.871987903221196,
+   "has_screen": true
+  },
+  "DNge131": {
+   "family_hint": "locomotion",
+   "confidence": 0.68,
+   "separation": 4.824014004033479,
+   "has_screen": true
+  },
+  "DNge132": {
+   "family_hint": "steering",
+   "confidence": 0.62,
+   "separation": 1.308821025854322,
+   "has_screen": true
+  },
+  "DNge133": {
+   "family_hint": "steering",
+   "confidence": 0.63,
+   "separation": 1.3921164754610154,
+   "has_screen": true
+  },
+  "DNge134": {
+   "family_hint": "locomotion",
+   "confidence": 0.69,
+   "separation": 26.987651497181695,
+   "has_screen": true
+  },
+  "DNge135": {
+   "family_hint": "steering",
+   "confidence": 0.65,
+   "separation": 1.727355511221385,
+   "has_screen": true
+  },
+  "DNge136": {
+   "family_hint": "locomotion",
+   "confidence": 0.58,
+   "separation": 1.094690416253845,
+   "has_screen": true
+  },
+  "DNge137": {
+   "family_hint": "locomotion",
+   "confidence": 0.67,
+   "separation": 6.288768648241969,
+   "has_screen": true
+  },
+  "DNge138": {
+   "family_hint": "locomotion",
+   "confidence": 0.62,
+   "separation": 9.020809276334358,
+   "has_screen": true
+  },
+  "DNge139": {
+   "family_hint": "steering",
+   "confidence": 0.85,
+   "separation": 3.7203489310254723,
+   "has_screen": true
+  },
+  "DNge140": {
+   "family_hint": "locomotion",
+   "confidence": 0.63,
+   "separation": 1.0409610943738483,
+   "has_screen": true
+  },
+  "DNge141": {
+   "family_hint": "locomotion",
+   "confidence": 0.63,
+   "separation": 19.13602623325961,
+   "has_screen": true
+  },
+  "DNge142": {
+   "family_hint": "steering",
+   "confidence": 0.62,
+   "separation": 1.4171659947357325,
+   "has_screen": true
+  },
+  "DNge143": {
+   "family_hint": "locomotion",
+   "confidence": 0.68,
+   "separation": 15.904716281656833,
+   "has_screen": true
+  },
+  "DNge144": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.54,
+   "separation": 1.1125156186309444,
+   "has_screen": true
+  },
+  "DNge146": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.56,
+   "separation": 1.1598902298689069,
+   "has_screen": true
+  },
+  "DNge147": {
+   "family_hint": "steering",
+   "confidence": 0.74,
+   "separation": 4.625,
+   "has_screen": true
+  },
+  "DNge148": {
+   "family_hint": "locomotion",
+   "confidence": 0.68,
+   "separation": 1.152443057161611,
+   "has_screen": true
+  },
+  "DNge149": {
+   "family_hint": "locomotion",
+   "confidence": 0.58,
+   "separation": 6.231087086615925,
+   "has_screen": true
+  },
+  "DNge150": {
+   "family_hint": "locomotion",
+   "confidence": 0.67,
+   "separation": 4.279588635924434,
+   "has_screen": true
+  },
+  "DNge151": {
+   "family_hint": "locomotion",
+   "confidence": 0.66,
+   "separation": 2.3796474305012336,
+   "has_screen": true
+  },
+  "DNge152": {
+   "family_hint": "steering",
+   "confidence": 0.73,
+   "separation": 2.126915395630437,
+   "has_screen": true
+  },
+  "DNge153": {
+   "family_hint": "locomotion",
+   "confidence": 0.64,
+   "separation": 8.0,
+   "has_screen": true
+  },
+  "DNge154": {
+   "family_hint": "steering",
+   "confidence": 0.81,
+   "separation": 2.5177629822488474,
+   "has_screen": true
+  },
+  "DNge172": {
+   "family_hint": "locomotion",
+   "confidence": 0.7,
+   "separation": 41.20072814890533,
+   "has_screen": true
+  },
+  "DNge173": {
+   "family_hint": "steering",
+   "confidence": 0.73,
+   "separation": 1.8880011904083316,
+   "has_screen": true
+  },
+  "DNge174": {
+   "family_hint": "steering",
+   "confidence": 0.81,
+   "separation": 3.1269703177528414,
+   "has_screen": true
+  },
+  "DNge176": {
+   "family_hint": "steering",
+   "confidence": 0.78,
+   "separation": 2.863470083035974,
+   "has_screen": true
+  },
+  "DNge178": {
+   "family_hint": "locomotion",
+   "confidence": 0.7,
+   "separation": 8.670939117834076,
+   "has_screen": true
+  },
+  "DNge179": {
+   "family_hint": "locomotion",
+   "confidence": 0.71,
+   "separation": 7.14489935386493,
+   "has_screen": true
+  },
+  "DNge180": {
+   "family_hint": "steering",
+   "confidence": 0.81,
+   "separation": 8.1,
+   "has_screen": true
+  },
+  "DNge182": {
+   "family_hint": "locomotion",
+   "confidence": 0.64,
+   "separation": 2.1189138534559033,
+   "has_screen": true
+  },
+  "DNge183": {
+   "family_hint": "steering",
+   "confidence": 0.77,
+   "separation": 2.6807959017177465,
+   "has_screen": true
+  },
+  "DNge184": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.53,
+   "separation": 1.0526570120461185,
+   "has_screen": true
+  },
+  "DNp02": {
+   "family_hint": "steering",
+   "confidence": 0.8200000000000001,
+   "separation": 3.1632186742228843,
+   "has_screen": true
+  },
+  "DNp03": {
+   "family_hint": "locomotion",
+   "confidence": 0.64,
+   "separation": 3.7184890068181136,
+   "has_screen": true
+  },
+  "DNp04": {
+   "family_hint": "locomotion",
+   "confidence": 0.68,
+   "separation": 9.390819985496474,
+   "has_screen": true
+  },
+  "DNp05": {
+   "family_hint": "locomotion",
+   "confidence": 0.71,
+   "separation": 11.419639366692195,
+   "has_screen": true
+  },
+  "DNp06": {
+   "family_hint": "locomotion",
+   "confidence": 0.62,
+   "separation": 5.5677643628300215,
+   "has_screen": true
+  },
+  "DNp07": {
+   "family_hint": "locomotion",
+   "confidence": 0.73,
+   "separation": 3.0632895571840932,
+   "has_screen": true
+  },
+  "DNp08": {
+   "family_hint": "locomotion",
+   "confidence": 0.6,
+   "separation": 2.222222222222222,
+   "has_screen": true
+  },
+  "DNp09": {
+   "family_hint": "locomotion",
+   "confidence": 0.72,
+   "separation": 11.499778169998917,
+   "has_screen": true
+  },
+  "DNp10": {
+   "family_hint": "steering",
+   "confidence": 0.77,
+   "separation": 2.1692292538031928,
+   "has_screen": true
+  },
+  "DNp101": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.6,
+   "separation": 1.2309149097933274,
+   "has_screen": true
+  },
+  "DNp102": {
+   "family_hint": "steering",
+   "confidence": 0.5,
+   "separation": 1.0910894511799618,
+   "has_screen": true
+  },
+  "DNp103": {
+   "family_hint": "locomotion",
+   "confidence": 0.71,
+   "separation": 5.24696219205913,
+   "has_screen": true
+  },
+  "DNp104": {
+   "family_hint": "steering",
+   "confidence": 0.73,
+   "separation": 2.2030364870346175,
+   "has_screen": true
+  },
+  "DNp11": {
+   "family_hint": "locomotion",
+   "confidence": 0.7,
+   "separation": 13.08094458023239,
+   "has_screen": true
+  },
+  "DNp13": {
+   "family_hint": "steering",
+   "confidence": 0.8200000000000001,
+   "separation": 2.936070983561675,
+   "has_screen": true
+  },
+  "DNp14": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.56,
+   "separation": 1.085793428061274,
+   "has_screen": true
+  },
+  "DNp15": {
+   "family_hint": "locomotion",
+   "confidence": 0.7,
+   "separation": 1.740279123753264,
+   "has_screen": true
+  },
+  "DNp17": {
+   "family_hint": "locomotion",
+   "confidence": 0.65,
+   "separation": 10.618620533798932,
+   "has_screen": true
+  },
+  "DNp18": {
+   "family_hint": "locomotion",
+   "confidence": 0.68,
+   "separation": 82.04876598706406,
+   "has_screen": true
+  },
+  "DNp19": {
+   "family_hint": "steering",
+   "confidence": 0.58,
+   "separation": 1.5101913673775567,
+   "has_screen": true
+  },
+  "DNp20": {
+   "family_hint": "locomotion",
+   "confidence": 0.63,
+   "separation": 10.453980786557542,
+   "has_screen": true
+  },
+  "DNp21": {
+   "family_hint": "steering",
+   "confidence": 0.63,
+   "separation": 1.7197459348627346,
+   "has_screen": true
+  },
+  "DNp22": {
+   "family_hint": "locomotion",
+   "confidence": 0.57,
+   "separation": 3.0262013708347473,
+   "has_screen": true
+  },
+  "DNp23": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.53,
+   "separation": 1.0216897131403577,
+   "has_screen": true
+  },
+  "DNp24": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.52,
+   "separation": 1.0408329997330663,
+   "has_screen": true
+  },
+  "DNp25": {
+   "family_hint": "steering",
+   "confidence": 0.8,
+   "separation": 2.324952774876386,
+   "has_screen": true
+  },
+  "DNp26": {
+   "family_hint": "locomotion",
+   "confidence": 0.65,
+   "separation": 4.560701700396551,
+   "has_screen": true
+  },
+  "DNp27": {
+   "family_hint": "steering",
+   "confidence": 0.48,
+   "separation": 1.1604227448713371,
+   "has_screen": true
+  },
+  "DNp28": {
+   "family_hint": "steering",
+   "confidence": 0.8,
+   "separation": 6.666666666666667,
+   "has_screen": true
+  },
+  "DNp30": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.52,
+   "separation": 1.0172639139607607,
+   "has_screen": true
+  },
+  "DNp31": {
+   "family_hint": "locomotion",
+   "confidence": 0.65,
+   "separation": 5.298766184398314,
+   "has_screen": true
+  },
+  "DNp32": {
+   "family_hint": "steering",
+   "confidence": 0.6,
+   "separation": 1.2211882515199581,
+   "has_screen": true
+  },
+  "DNp33": {
+   "family_hint": "locomotion",
+   "confidence": 0.63,
+   "separation": 1.0164644607658448,
+   "has_screen": true
+  },
+  "DNp34": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.58,
+   "separation": 1.1977234980683813,
+   "has_screen": true
+  },
+  "DNp35": {
+   "family_hint": "locomotion",
+   "confidence": 0.69,
+   "separation": 7.2890328576567684,
+   "has_screen": true
+  },
+  "DNp36": {
+   "family_hint": "steering",
+   "confidence": 0.81,
+   "separation": 2.7652944050956214,
+   "has_screen": true
+  },
+  "DNp38": {
+   "family_hint": "locomotion",
+   "confidence": 0.63,
+   "separation": 10.515294982615968,
+   "has_screen": true
+  },
+  "DNp39": {
+   "family_hint": "steering",
+   "confidence": 0.6,
+   "separation": 1.4285714285714284,
+   "has_screen": true
+  },
+  "DNp42": {
+   "family_hint": "steering",
+   "confidence": 0.72,
+   "separation": 2.2358523385603326,
+   "has_screen": true
+  },
+  "DNp43": {
+   "family_hint": "steering",
+   "confidence": 0.64,
+   "separation": 1.7303618253948008,
+   "has_screen": true
+  },
+  "DNp44": {
+   "family_hint": "locomotion",
+   "confidence": 0.72,
+   "separation": 1.8463422195889727,
+   "has_screen": true
+  },
+  "DNp45": {
+   "family_hint": "locomotion",
+   "confidence": 0.6,
+   "separation": 1.091089451179962,
+   "has_screen": true
+  },
+  "DNp46": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.58,
+   "separation": 1.1888840894516421,
+   "has_screen": true
+  },
+  "DNp47": {
+   "family_hint": "steering",
+   "confidence": 0.8,
+   "separation": 2.6318067798390756,
+   "has_screen": true
+  },
+  "DNp48": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.55,
+   "separation": 1.0964968063897376,
+   "has_screen": true
+  },
+  "DNp49": {
+   "family_hint": "locomotion",
+   "confidence": 0.63,
+   "separation": 1.020813641902078,
+   "has_screen": true
+  },
+  "DNp52": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.6,
+   "separation": 1.3576884666042612,
+   "has_screen": true
+  },
+  "DNp53": {
+   "family_hint": "locomotion",
+   "confidence": 0.72,
+   "separation": 1.5722204942971878,
+   "has_screen": true
+  },
+  "DNp54": {
+   "family_hint": "steering",
+   "confidence": 0.62,
+   "separation": 1.4505156397767658,
+   "has_screen": true
+  },
+  "DNp55": {
+   "family_hint": "locomotion",
+   "confidence": 0.7,
+   "separation": 83.24662155306964,
+   "has_screen": true
+  },
+  "DNp56": {
+   "family_hint": "locomotion",
+   "confidence": 0.67,
+   "separation": 1.7192679700794684,
+   "has_screen": true
+  },
+  "DNp57": {
+   "family_hint": "locomotion",
+   "confidence": 0.65,
+   "separation": 4.92028288551272,
+   "has_screen": true
+  },
+  "DNp58": {
+   "family_hint": "steering",
+   "confidence": 0.87,
+   "separation": 3.2650518189274873,
+   "has_screen": true
+  },
+  "DNp59": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.56,
+   "separation": 1.1318329168362207,
+   "has_screen": true
+  },
+  "DNp60": {
+   "family_hint": "steering",
+   "confidence": 0.75,
+   "separation": 2.3681586673150226,
+   "has_screen": true
+  },
+  "DNp62": {
+   "family_hint": "steering",
+   "confidence": 0.87,
+   "separation": 3.9876384620727188,
+   "has_screen": true
+  },
+  "DNp63": {
+   "family_hint": "steering",
+   "confidence": 0.59,
+   "separation": 1.2850401835136447,
+   "has_screen": true
+  },
+  "DNp64": {
+   "family_hint": "locomotion",
+   "confidence": 0.7,
+   "separation": 5.933557161746735,
+   "has_screen": true
+  },
+  "DNp65": {
+   "family_hint": "steering",
+   "confidence": 0.63,
+   "separation": 1.3015306658944938,
+   "has_screen": true
+  },
+  "DNp66": {
+   "family_hint": "steering",
+   "confidence": 0.63,
+   "separation": 1.779064858383451,
+   "has_screen": true
+  },
+  "DNp67": {
+   "family_hint": "locomotion",
+   "confidence": 0.61,
+   "separation": 1.7430105959230424,
+   "has_screen": true
+  },
+  "DNp68": {
+   "family_hint": "locomotion",
+   "confidence": 0.61,
+   "separation": 1.01202644770984,
+   "has_screen": true
+  },
+  "DNp69": {
+   "family_hint": "steering",
+   "confidence": 0.83,
+   "separation": 2.9492765762526107,
+   "has_screen": true
+  },
+  "DNp70": {
+   "family_hint": "locomotion",
+   "confidence": 0.71,
+   "separation": 1.1102427162061856,
+   "has_screen": true
+  },
+  "DNp71": {
+   "family_hint": "locomotion",
+   "confidence": 0.74,
+   "separation": 42.14261501141095,
+   "has_screen": true
+  },
+  "DNp72": {
+   "family_hint": "locomotion",
+   "confidence": 0.63,
+   "separation": 6.372720788480685,
+   "has_screen": true
+  },
+  "DNp73": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.59,
+   "separation": 1.3150132361413795,
+   "has_screen": true
+  },
+  "DNpe001": {
+   "family_hint": "steering",
+   "confidence": 0.66,
+   "separation": 1.907641932953064,
+   "has_screen": true
+  },
+  "DNpe002": {
+   "family_hint": "locomotion",
+   "confidence": 0.66,
+   "separation": 2.169949341041693,
+   "has_screen": true
+  },
+  "DNpe003": {
+   "family_hint": "locomotion",
+   "confidence": 0.68,
+   "separation": 40.8166632639171,
+   "has_screen": true
+  },
+  "DNpe004": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.56,
+   "separation": 1.1758894715842625,
+   "has_screen": true
+  },
+  "DNpe005": {
+   "family_hint": "locomotion",
+   "confidence": 0.72,
+   "separation": 7.19503961360341,
+   "has_screen": true
+  },
+  "DNpe006": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.62,
+   "separation": 1.3389960596511081,
+   "has_screen": true
+  },
+  "DNpe007": {
+   "family_hint": "locomotion",
+   "confidence": 0.73,
+   "separation": 8.905539959783946,
+   "has_screen": true
+  },
+  "DNpe008": {
+   "family_hint": "locomotion",
+   "confidence": 0.61,
+   "separation": 4.9270183888515815,
+   "has_screen": true
+  },
+  "DNpe010": {
+   "family_hint": "steering",
+   "confidence": 0.71,
+   "separation": 2.1426793230062717,
+   "has_screen": true
+  },
+  "DNpe011": {
+   "family_hint": "locomotion",
+   "confidence": 0.69,
+   "separation": 5.30690732028763,
+   "has_screen": true
+  },
+  "DNpe013": {
+   "family_hint": "steering",
+   "confidence": 0.45,
+   "separation": 1.0164463907684076,
+   "has_screen": true
+  },
+  "DNpe014": {
+   "family_hint": "locomotion",
+   "confidence": 0.63,
+   "separation": 1.2100767390069582,
+   "has_screen": true
+  },
+  "DNpe015": {
+   "family_hint": "steering",
+   "confidence": 0.72,
+   "separation": 2.0995626366712954,
+   "has_screen": true
+  },
+  "DNpe016": {
+   "family_hint": "locomotion",
+   "confidence": 0.63,
+   "separation": 4.675162334843877,
+   "has_screen": true
+  },
+  "DNpe017": {
+   "family_hint": "steering",
+   "confidence": 0.47,
+   "separation": 1.1238360346682044,
+   "has_screen": true
+  },
+  "DNpe018": {
+   "family_hint": "locomotion",
+   "confidence": 0.61,
+   "separation": 2.1425595031386635,
+   "has_screen": true
+  },
+  "DNpe020": {
+   "family_hint": "locomotion",
+   "confidence": 0.69,
+   "separation": 5.437961803049793,
+   "has_screen": true
+  },
+  "DNpe021": {
+   "family_hint": "locomotion",
+   "confidence": 0.61,
+   "separation": 4.418144406874904,
+   "has_screen": true
+  },
+  "DNpe022": {
+   "family_hint": "locomotion",
+   "confidence": 0.64,
+   "separation": 9.055385138137417,
+   "has_screen": true
+  },
+  "DNpe023": {
+   "family_hint": "steering",
+   "confidence": 0.81,
+   "separation": 7.363636363636364,
+   "has_screen": true
+  },
+  "DNpe024": {
+   "family_hint": "locomotion",
+   "confidence": 0.64,
+   "separation": 12.507775359529147,
+   "has_screen": true
+  },
+  "DNpe025": {
+   "family_hint": "locomotion",
+   "confidence": 0.68,
+   "separation": 6.870706773705885,
+   "has_screen": true
+  },
+  "DNpe026": {
+   "family_hint": "steering",
+   "confidence": 0.75,
+   "separation": 2.4834981694969573,
+   "has_screen": true
+  },
+  "DNpe027": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.56,
+   "separation": 1.1247338441827477,
+   "has_screen": true
+  },
+  "DNpe028": {
+   "family_hint": "steering",
+   "confidence": 0.6900000000000001,
+   "separation": 2.0490028546619206,
+   "has_screen": true
+  },
+  "DNpe029": {
+   "family_hint": "locomotion",
+   "confidence": 0.61,
+   "separation": 6.80881781221968,
+   "has_screen": true
+  },
+  "DNpe030": {
+   "family_hint": "steering",
+   "confidence": 0.75,
+   "separation": 2.185187050305244,
+   "has_screen": true
+  },
+  "DNpe031": {
+   "family_hint": "steering",
+   "confidence": 0.55,
+   "separation": 1.2082806317003036,
+   "has_screen": true
+  },
+  "DNpe032": {
+   "family_hint": "steering",
+   "confidence": 0.85,
+   "separation": 9.444444444444445,
+   "has_screen": true
+  },
+  "DNpe034": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.61,
+   "separation": 1.3273421266621959,
+   "has_screen": true
+  },
+  "DNpe035": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.61,
+   "separation": 1.297285200680296,
+   "has_screen": true
+  },
+  "DNpe036": {
+   "family_hint": "locomotion",
+   "confidence": 0.69,
+   "separation": 27.270252412962122,
+   "has_screen": true
+  },
+  "DNpe039": {
+   "family_hint": "steering",
+   "confidence": 0.47,
+   "separation": 1.1004883286084903,
+   "has_screen": true
+  },
+  "DNpe040": {
+   "family_hint": "steering",
+   "confidence": 0.5,
+   "separation": 1.1259433727776125,
+   "has_screen": true
+  },
+  "DNpe041": {
+   "family_hint": "locomotion",
+   "confidence": 0.61,
+   "separation": 2.6303449499572475,
+   "has_screen": true
+  },
+  "DNpe042": {
+   "family_hint": "locomotion",
+   "confidence": 0.7,
+   "separation": 1.792751449424126,
+   "has_screen": true
+  },
+  "DNpe043": {
+   "family_hint": "steering",
+   "confidence": 0.68,
+   "separation": 1.8548520670059354,
+   "has_screen": true
+  },
+  "DNpe045": {
+   "family_hint": "locomotion",
+   "confidence": 0.69,
+   "separation": 1.2654965355470087,
+   "has_screen": true
+  },
+  "DNpe048": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.55,
+   "separation": 1.0819730286263713,
+   "has_screen": true
+  },
+  "DNpe049": {
+   "family_hint": "locomotion",
+   "confidence": 0.69,
+   "separation": 7.002950971843911,
+   "has_screen": true
+  },
+  "DNpe050": {
+   "family_hint": "no-clear-role",
+   "confidence": 0.54,
+   "separation": 1.0981599769558137,
+   "has_screen": true
+  },
+  "DNpe052": {
+   "family_hint": "steering",
+   "confidence": 0.62,
+   "separation": 1.4171659947357327,
+   "has_screen": true
+  },
+  "DNpe053": {
+   "family_hint": "steering",
+   "confidence": 0.51,
+   "separation": 1.2435326151901354,
+   "has_screen": true
+  },
+  "DNpe054": {
+   "family_hint": "locomotion",
+   "confidence": 0.62,
+   "separation": 3.317378483079674,
+   "has_screen": true
+  },
+  "DNpe055": {
+   "family_hint": "steering",
+   "confidence": 0.64,
+   "separation": 1.5813318755436825,
+   "has_screen": true
+  },
+  "DNpe056": {
+   "family_hint": "locomotion",
+   "confidence": 0.66,
+   "separation": 9.19578707887476,
+   "has_screen": true
+  },
+  "DNpe057": {
+   "family_hint": "steering",
+   "confidence": 0.81,
+   "separation": 2.5927468186411433,
+   "has_screen": true
+  }
+ },
+ "skipped_unshaped": [
+  "CB0429",
+  "DNc01",
+  "DNc02",
+  "DNd02",
+  "DNd03",
+  "DNd04",
+  "DNd05",
+  "DNde001",
+  "DNde002",
+  "DNde003",
+  "DNde005",
+  "DNde006",
+  "DNde007",
+  "DNg01_a",
+  "DNg01_b",
+  "DNg01_c",
+  "DNg01_d",
+  "DNg01_unclear",
+  "DNg02_a",
+  "DNg02_b",
+  "DNg02_c",
+  "DNg02_d",
+  "DNg02_e",
+  "DNg02_f",
+  "DNg02_g",
+  "DNg05_a",
+  "DNg05_b",
+  "DNg05_c",
+  "DNg09_a",
+  "DNg09_b",
+  "DNg12_a",
+  "DNg12_b",
+  "DNg12_c",
+  "DNg12_d",
+  "DNg12_e",
+  "DNg12_f",
+  "DNg12_g",
+  "DNg12_h",
+  "DNg18_a",
+  "DNg18_b",
+  "DNg36_a",
+  "DNg36_b",
+  "DNg74_a",
+  "DNg74_b",
+  "DNg92_a",
+  "DNg92_b",
+  "DNp16_a",
+  "DNp16_b",
+  "DNp51,DNpe019",
+  "DNpe012_a",
+  "DNpe012_b",
+  "DNxl114",
+  "MDN",
+  "aSP22",
+  "pIP1",
+  "pIP10",
+  "pMP2"
+ ],
+ "meta": {
+  "source": "jev-latest two-level DN hierarchy",
+  "confidence_threshold": 0.9,
+  "calibration": "curated-map validation: screen-evidenced votes reproduced 5/5 at conf>=0.9; sub-0.9 band 1/5 (misses all <=0.71); name-only channel review-only (2/5)",
+  "note": "curation seed only; weights are null until a curator sets them; not loaded by the sim"
+ }
+}
