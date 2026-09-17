@@ -132,6 +132,10 @@ def ask(client, cache, dataset: str, state: dict) -> dict:
     hit = cache.get(key)
     if hit is not None:
         return hit
+    if client is None:
+        raise RuntimeError(
+            f"offline: TYPESAFE_API_KEY unset and cache miss for "
+            f"{key[:12]}... — set the key or ship the cache entry")
     resp = client.system_one(
         state=state,
         questions={"func_class": Choice(

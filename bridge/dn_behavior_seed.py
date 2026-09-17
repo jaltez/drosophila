@@ -145,6 +145,10 @@ class Seeder:
         hit = self.cache.get(key)
         if hit is not None:
             return hit
+        if self.client is None:
+            raise RuntimeError(
+                f"offline: TYPESAFE_API_KEY unset and cache miss for "
+                f"{key[:12]}... — set the key or ship the cache entry")
         resp = self.client.system_one(state=state, questions={"q": question})
         a = resp.answers["q"]
         out = {"choice": a.choice, "confidence": a.confidence,

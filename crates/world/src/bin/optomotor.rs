@@ -233,14 +233,16 @@ fn centered_instances(
     for _ in 0..WARMUP_MS {
         sim.step();
     }
-    // windowed mean of the arbiter EMA rates (sample every 100 ms)
+    // windowed mean of the arbiter EMA rates (sample every 100 ms).
+    // Overwrite per body: shared bodyIds appear as two steering
+    // instances with identical rates; accumulating would double them.
     let mut sum: HashMap<u64, f64> = HashMap::new();
     let mut samples = 0u64;
     for t in 0..MEASURE_MS {
         sim.step();
         if t % 100 == 0 {
             for (body, hz) in sim.steer_instance_stats() {
-                *sum.entry(body).or_default() += hz;
+                sum.insert(body, hz);
             }
             samples += 1;
         }

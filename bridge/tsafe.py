@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Shared TypeSafe (Jev) client helpers for bridge analysis scripts.
 
-Client: TYPESAFE_API_KEY from the environment; without a key the client
-falls back to "cache-only" mode (replays cached answers, never calls out).
+Client: TYPESAFE_API_KEY from the environment; without a key get_client()
+returns None and callers must serve strictly from the cache, failing
+loudly on a cache miss (never calling out).
 Answers are cached to a JSON sidecar keyed by a content hash of
 (dataset, question version, state), so a dataset release is judged once
 and every later run is free and reproducible.
@@ -26,9 +27,15 @@ CACHE_PATH = Path(__file__).parent / "out" / "tsafe_cache.json"
 MODEL = "jev-latest"
 
 
-def get_client() -> TypeSafeClient:
+def get_client() -> TypeSafeClient | None:
+    """Live client when TYPESAFE_API_KEY is set, else None: callers must
+    then serve strictly from the AnswerCache and fail loudly on a miss
+    (the SDK has no silent cache-only mode — reviewed 2026-09-17)."""
+    key = os.environ.get("TYPESAFE_API_KEY")
+    if not key:
+        return None
     return TypeSafeClient(
-        api_key=os.environ.get("TYPESAFE_API_KEY") or "cache-only",
+        api_key=key,
         base_url=os.environ.get("TYPESAFE_BASE_URL"),
         model=MODEL,
         timeout=60.0,
