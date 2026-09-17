@@ -90,11 +90,35 @@ impl WorldConfig {
     }
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
 pub struct Fly {
     pub x: f64,
     pub y: f64,
     pub heading: f64,
+}
+
+/// Arbiter dynamics snapshot (wire-compatible with the historical
+/// "arbiter" object in checkpoints).
+#[derive(serde::Serialize, serde::Deserialize)]
+pub struct ArbiterCp {
+    pub ema: Vec<f64>,
+    pub steer_dc: f64,
+}
+
+/// Typed full-embodiment snapshot. Wire-compatible with the historical
+/// serde_json::Value layout (same keys, same nesting), so checkpoints
+/// written by earlier versions still restore.
+#[derive(serde::Serialize, serde::Deserialize)]
+pub struct Checkpoint {
+    pub tick: u64,
+    pub brain: brain::BrainState,
+    pub arbiter: ArbiterCp,
+    pub fly: Fly,
+    pub t_ms: u64,
+    pub feed_ema: f64,
+    pub groom_ema: f64,
+    pub escape_until: u64,
+    pub escape_armed: bool,
 }
 
 #[derive(Clone, Debug)]
@@ -262,54 +286,34 @@ impl Sim {
     }
 
     /// Snapshot the full embodied state (kernel + arbiter + body).
-    pub fn checkpoint(&self) -> serde_json::Value {
+    pub fn checkpoint(&self) -> Checkpoint {
         let bs = self.brain.state();
         let (ema, sdc) = self.arbiter.state();
-        serde_json::json!({
-            "tick": bs.tick,
-            "brain": {
-                "cur": bs.cur, "v": bs.v, "adap": bs.adap, "refrac": bs.refrac,
-                "spikes": bs.spikes, "sensory_gain": bs.sensory_gain,
-                "buckets": bs.buckets, "stsd": bs.stsd, "rng": bs.rng,
-            },
-            "arbiter": {"ema": ema, "steer_dc": sdc},
-            "fly": {"x": self.fly.x, "y": self.fly.y, "heading": self.fly.heading},
-            "t_ms": self.t_ms,
-            "feed_ema": self.feed_ema,
-            "groom_ema": self.groom_ema,
-            "escape_until": self.escape_until,
-            "escape_armed": self.escape_armed,
-        })
+        Checkpoint {
+            tick: bs.tick,
+            brain: bs,
+            arbiter: ArbiterCp { ema, steer_dc: sdc },
+            fly: self.fly,
+            t_ms: self.t_ms,
+            feed_ema: self.feed_ema,
+            groom_ema: self.groom_ema,
+            escape_until: self.escape_until,
+            escape_armed: self.escape_armed,
+        }
     }
 
     /// Restore from [`Sim::checkpoint`]. Deterministic continuation.
-    pub fn restore(&mut self, cp: &serde_json::Value) {
-        let bs = brain::BrainState {
-            cur: serde_json::from_value(cp["brain"]["cur"].clone()).unwrap(),
-            v: serde_json::from_value(cp["brain"]["v"].clone()).unwrap(),
-            adap: serde_json::from_value(cp["brain"]["adap"].clone()).unwrap(),
-            refrac: serde_json::from_value(cp["brain"]["refrac"].clone()).unwrap(),
-            spikes: serde_json::from_value(cp["brain"]["spikes"].clone()).unwrap(),
-            sensory_gain: serde_json::from_value(cp["brain"]["sensory_gain"].clone()).unwrap(),
-            buckets: serde_json::from_value(cp["brain"]["buckets"].clone()).unwrap(),
-            stsd: serde_json::from_value(cp["brain"]["stsd"].clone()).unwrap(),
-            rng: serde_json::from_value(cp["brain"]["rng"].clone()).unwrap(),
-            tick: serde_json::from_value(cp["tick"].clone()).unwrap(),
-        };
+    pub fn restore(&mut self, cp: &Checkpoint) {
+        let mut bs = cp.brain.clone();
+        bs.tick = cp.tick;
         self.brain.set_state(bs);
-        let ema: Vec<f64> = serde_json::from_value(cp["arbiter"]["ema"].clone()).unwrap();
-        let sdc: f64 = serde_json::from_value(cp["arbiter"]["steer_dc"].clone()).unwrap();
-        self.arbiter.set_state(ema, sdc);
-        self.fly = Fly {
-            x: serde_json::from_value(cp["fly"]["x"].clone()).unwrap(),
-            y: serde_json::from_value(cp["fly"]["y"].clone()).unwrap(),
-            heading: serde_json::from_value(cp["fly"]["heading"].clone()).unwrap(),
-        };
-        self.escape_until = serde_json::from_value(cp["escape_until"].clone()).unwrap();
-        self.escape_armed = serde_json::from_value(cp["escape_armed"].clone()).unwrap();
-        self.t_ms = serde_json::from_value(cp["t_ms"].clone()).unwrap();
-        self.feed_ema = serde_json::from_value(cp["feed_ema"].clone()).unwrap();
-        self.groom_ema = serde_json::from_value(cp["groom_ema"].clone()).unwrap();
+        self.arbiter.set_state(cp.arbiter.ema.clone(), cp.arbiter.steer_dc);
+        self.fly = cp.fly;
+        self.escape_until = cp.escape_until;
+        self.escape_armed = cp.escape_armed;
+        self.t_ms = cp.t_ms;
+        self.feed_ema = cp.feed_ema;
+        self.groom_ema = cp.groom_ema;
     }
     /// Advance 1 ms.
     pub fn step(&mut self) -> StepInfo {
@@ -502,6 +506,42 @@ mod tests {
             sim.apply_steer_instances(&insts);
         }
         sim
+    }
+
+    /// Backward compatibility: the historical serde_json::Value layout
+    /// (tick at top level, brain without its tick key) must restore.
+    #[test]
+    fn restore_legacy_checkpoint_shape() {
+        let mut sim = make_sim();
+        for _ in 0..500 {
+            sim.step();
+        }
+        let cp = sim.checkpoint();
+        let legacy = serde_json::json!({
+            "tick": cp.tick,
+            "brain": {
+                "cur": cp.brain.cur, "v": cp.brain.v, "adap": cp.brain.adap,
+                "refrac": cp.brain.refrac, "spikes": cp.brain.spikes,
+                "sensory_gain": cp.brain.sensory_gain,
+                "buckets": cp.brain.buckets, "stsd": cp.brain.stsd,
+                "rng": cp.brain.rng,
+            },
+            "arbiter": {"ema": cp.arbiter.ema, "steer_dc": cp.arbiter.steer_dc},
+            "fly": {"x": cp.fly.x, "y": cp.fly.y, "heading": cp.fly.heading},
+            "t_ms": cp.t_ms,
+            "feed_ema": cp.feed_ema,
+            "groom_ema": cp.groom_ema,
+            "escape_until": cp.escape_until,
+            "escape_armed": cp.escape_armed,
+        });
+        let legacy: Checkpoint = serde_json::from_value(legacy).expect("legacy shape");
+        let mut sim2 = make_sim();
+        sim2.restore(&legacy);
+        for _ in 0..300 {
+            let a = sim.step();
+            let b = sim2.step();
+            assert_eq!(a.fly, b.fly, "legacy restore diverged");
+        }
     }
 
     /// Acceptance: checkpoint -> continue == uninterrupted run, bit-identical.

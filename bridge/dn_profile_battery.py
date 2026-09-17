@@ -23,6 +23,9 @@ from pathlib import Path
 import numpy as np
 import pyarrow.feather as feather
 
+from analysis import enrichment_z, fdi
+from vocab import KEEP_STATUS
+
 RUNS = Path(__file__).parent / ".." / "runs"
 ANNOT = Path(__file__).parent / "data" / (
     "body-annotations-male-cns-v1.0-minconf-0.5.feather")
@@ -51,10 +54,7 @@ def resp_vec(d):
     return np.array([max(d[p] - d["base"], 0.0) for p in PROTOS])
 
 
-def fdi(m, f):
-    dm, df = np.asarray(m, float), np.asarray(f, float)
-    return float(np.linalg.norm(dm - df) /
-                 (np.linalg.norm(dm) + np.linalg.norm(df) + 1e-9))
+
 
 
 def main():
@@ -106,10 +106,7 @@ def main():
     an = feather.read_table(
         ANNOT, columns=["bodyId", "type", "dimorphism", "fruDsx",
                         "statusLabel"]).to_pandas()
-    keep = {"Reviewed", "Roughly traced", "Prelim Roughly traced",
-            "RT Hard to trace", "Hard to trace", "Partially traced",
-            "0.5assign", "Anchor", "Soma Anchor", "Sensory Anchor"}
-    an = an[an.statusLabel.isin(keep)]
+    an = an[an.statusLabel.isin(KEEP_STATUS)]
     dim_types = set(an.loc[an.dimorphism.notna(), "type"].dropna())
     fru_types = set(an.loc[an.fruDsx.notna(), "type"].dropna())
     for r in rows:
@@ -118,24 +115,8 @@ def main():
     flagged = np.array([r["anat_dimorphic"] for r in rows])
     fru = np.array([r["fru"] for r in rows])
 
-    def enrich(mask, label):
-        hi = fdi_arr >= np.quantile(fdi_arr, 0.75)
-        a = int((hi & mask).sum())
-        b = int((hi & ~mask).sum())
-        c = int((~hi & mask).sum())
-        dd = int((~hi & ~mask).sum())
-        p_hi = a / max(a + b, 1)
-        p_lo = c / max(c + dd, 1)
-        p_pool = (a + c) / max(a + b + c + dd, 1)
-        se = math.sqrt(p_pool * (1 - p_pool) *
-                       (1 / max(a + b, 1) + 1 / max(c + dd, 1))) or 1e-9
-        z = (p_hi - p_lo) / se
-        print(f"{label:<24} top-FDI flagged: {a}/{a+b} ({p_hi:.0%}) vs "
-              f"{c}/{c+dd} ({p_lo:.0%})  z={z:+.2f}")
-        return z
-
-    z_dim = enrich(flagged, "anatomical dimorphism")
-    z_fru = enrich(fru, "fruDsx")
+    z_dim, _ = enrichment_z(fdi_arr, flagged, "anatomical dimorphism")
+    z_fru, _ = enrichment_z(fdi_arr, fru, "fruDsx")
 
     # 4. lateralization in both sexes: odor |L-R| and vis |L-R|
     def lat(d, t, pa, pb):

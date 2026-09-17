@@ -25,32 +25,67 @@ const STRIPE_BRIGHTNESS: f64 = 1.0;
 /// Warm up 2 s before recording (EMA settling), as in `sim_headless`.
 const WARMUP_MS: u64 = 2000;
 
-fn main() {
-    let args: Vec<String> = std::env::args().collect();
-    let con_dir = args.get(1).map(|s| s.as_str()).unwrap_or("bridge/out/connectome-malecns-v1.0");
-    let params_path = args.get(2).map(|s| s.as_str()).unwrap_or("params/homeostasis_v1.json");
-    let map_path = args.get(3).map(|s| s.as_str()).unwrap_or("scenarios/behavior_map.json");
-    let out_prefix = args.get(4).map(|s| s.as_str()).unwrap_or("runs/optomotor");
-    // onset-window length; the drum response adapts after a few seconds
-    let seconds: u64 = args.get(5).and_then(|s| s.parse().ok()).unwrap_or(8);
-    let seed: u64 = args.get(6).and_then(|s| s.parse().ok()).unwrap_or(7);
-    // drum speed magnitude; the assay runs +omega, -omega and 0
-    let drum_omega: f64 = args
-        .get(7)
-        .and_then(|s| s.parse::<f64>().ok())
-        .map(f64::abs)
-        .unwrap_or(0.5);
+#[derive(clap::Parser)]
+#[command(about = "Headless optomotor drum assay (onset-window protocol)")]
+struct Args {
+    #[arg(default_value = "bridge/out/connectome-malecns-v1.0")]
+    con_dir: String,
+    #[arg(default_value = "params/homeostasis_v1.json")]
+    params_path: String,
+    #[arg(default_value = "scenarios/behavior_map.json")]
+    map_path: String,
+    #[arg(default_value = "runs/optomotor")]
+    out_prefix: String,
+    /// onset-window length (s); the drum response adapts after a few seconds
+    #[arg(default_value_t = 8)]
+    seconds: u64,
+    #[arg(default_value_t = 7)]
+    seed: u64,
+    /// drum speed magnitude; the assay runs +omega, -omega and 0
+    #[arg(default_value_t = 0.5)]
+    drum_omega: f64,
+    /// per-run count averaged into the verdict
+    #[arg(long, default_value_t = 1)]
+    seeds: u64,
+    /// steering sets: vis (default) | odor | both
+    #[arg(long, default_value = "vis")]
+    sets: String,
+    /// multiply the visual instance weights by this sign (calibrated: -1)
+    #[arg(long, default_value_t = 1.0)]
+    vis_sign: f64,
+    /// steering DC high-pass tau override (ms)
+    #[arg(long)]
+    dc_tau_ms: Option<f64>,
+    /// open-loop channel characterization instead of the behavioral assay
+    #[arg(long, default_value_t = false)]
+    openloop: bool,
+}
 
-    let con = Arc::new(Connectome::load(Path::new(con_dir)).expect("load connectome"));
+fn main() {
+    let args = <Args as clap::Parser>::parse();
+    let Args {
+        con_dir, params_path, map_path, out_prefix, seconds, seed,
+        drum_omega, seeds: n_seeds, sets, vis_sign, dc_tau_ms, openloop,
+    } = args;
+    let drum_omega = drum_omega.abs();
+    let (only_odor, only_vis) = match sets.as_str() {
+        "odor" => (true, false),
+        "vis" => (false, true),
+        _ => (false, false),
+    };
+    let n_seeds = n_seeds.max(1);
+    let _ = dc_tau_ms; // consumed below where the map is parsed
+
+    let con = Arc::new(Connectome::load(Path::new(&con_dir)).expect("load connectome"));
     let mut params: LifParams =
-        serde_json::from_slice(&fs::read(params_path).unwrap()).unwrap();
+        serde_json::from_slice(&fs::read(&params_path).unwrap()).unwrap();
     // per-instance centering (below) removes static bias; the global DC
     // high-pass would additionally absorb the sustained drum response —
     // optomotor following IS a DC behavior, so allow disabling the filter
     let mut map: BehaviorMapFile =
-        serde_json::from_slice(&fs::read(map_path).unwrap()).unwrap();
-    if let Ok(tau) = std::env::var("OPTOMOTOR_DC_TAU") {
-        map.arbiter.steer_dc_tau_ms = tau.parse().unwrap_or(map.arbiter.steer_dc_tau_ms);
+        serde_json::from_slice(&fs::read(&map_path).unwrap()).unwrap();
+    if let Some(tau) = dc_tau_ms {
+        map.arbiter.steer_dc_tau_ms = tau;
     }
     params.seed = seed;
     if params.gains_exc.len() != con.superclass_names.len() {
@@ -71,21 +106,9 @@ fn main() {
     // (previously -1.3 rad/s net turn) that swamps drum following.
     // Every instance's `base` is set to its measured static-scene rate,
     // nulling the static steering drive so only drum modulation remains.
-    // diagnostic knobs: vis_sign flips the visual instance weights;
-    // sets restricts which steering sets run (odor|vis|both)
-    let vis_sign: f64 = std::env::var("OPTOMOTOR_VIS_SIGN")
-        .ok()
-        .and_then(|v| v.parse().ok())
-        .unwrap_or(1.0);
     // vis-only is the assay standard: the odor-steering set has no
     // stimulus here and its unaveraged noise (~1.9 rad/s spin) swamps the
-    // visual response. Opt in with OPTOMOTOR_SETS=both|odor.
-    let sets = std::env::var("OPTOMOTOR_SETS").unwrap_or_else(|_| "vis".into());
-    let (only_odor, only_vis) = match sets.as_str() {
-        "odor" => (true, false),
-        "vis" => (false, true),
-        _ => (false, false),
-    };
+    // visual response. Opt in with --sets both|odor.
     let steer_insts: Vec<SteerInstance> =
         if only_vis { Vec::new() } else { steer_insts };
     let mut vis_steer: Vec<SteerInstance> =
@@ -96,7 +119,7 @@ fn main() {
         }
     }
     let (steer_insts, vis_steer, pre_bias) =
-        centered_instances(&con, &params, &map, &steer_insts, &vis_steer, seed);
+        centered_instances(&con, &params, &map, &steer_insts, &vis_steer, seed, &out_prefix);
     println!(
         "centered {} + {} instances against static scene (pre-centering bias {:+.3} Hz-equiv); wrote {}-centered.json",
         steer_insts.len(),
@@ -109,10 +132,10 @@ fn main() {
     // center, rotate the drum at several omegas, and record the mean
     // arbiter steering drive. Monotone increasing through zero = the
     // visual steering channel is sign-correct for following.
-    if std::env::var("OPTOMOTOR_OPENLOOP").as_deref() == Ok("1") {
+    if openloop {
         let field = OdorField { x: 1.0e6, y: 1.0e6, strength: 0.0, radius_mm: 8.0 };
         let (c_odor, c_vis, _) =
-            centered_instances(&con, &params, &map, &steer_insts, &vis_steer, seed);
+            centered_instances(&con, &params, &map, &steer_insts, &vis_steer, seed, &out_prefix);
         println!("omega_rad_s  mean_steer_Hz  (fly frozen; DC tau max)");
         for om in [-1.0f64, -0.5, -0.25, 0.25, 0.5, 1.0] {
             let cfg = WorldConfig {
@@ -138,12 +161,8 @@ fn main() {
     }
 
     // Seed replication: single-seed drift noise (~0.4 rad/s) rivals the
-    // drum response (~0.2), so the verdict averages OPTOMOTOR_SEEDS runs
-    // per condition (default 1 for the trace files, more for a verdict).
-    let n_seeds: u64 = std::env::var("OPTOMOTOR_SEEDS")
-        .ok()
-        .and_then(|v| v.parse().ok())
-        .unwrap_or(1);
+    // drum response (~0.2), so the verdict averages --seeds runs per
+    // condition (default 1 for the trace files, more for a verdict).
     let conds = [("plus", drum_omega), ("minus", -drum_omega), ("static", 0.0)];
     let mut results: Vec<(&str, f64, f64)> = Vec::new();
     for (tag, omega) in conds {
@@ -193,6 +212,7 @@ fn main() {
 /// exactly zero. Returns the centered (odor, visual) sets and the
 /// pre-centering static bias (Hz-equivalent) for the report. The centered
 /// union is also written to `<out_prefix>-centered.json` for reuse.
+#[allow(clippy::too_many_arguments)]
 fn centered_instances(
     con: &Arc<Connectome>,
     params: &LifParams,
@@ -200,6 +220,7 @@ fn centered_instances(
     steer_insts: &[SteerInstance],
     vis_steer: &[SteerInstance],
     seed: u64,
+    out_prefix: &str,
 ) -> (Vec<SteerInstance>, Vec<SteerInstance>, f64) {
     const MEASURE_MS: u64 = 5000;
     let cfg = WorldConfig { seed, ..WorldConfig::for_con(&con) };
@@ -251,10 +272,7 @@ fn centered_instances(
         "odor": c_odor, "visual": c_vis,
     }))
     .unwrap();
-    let path = format!(
-        "{}-centered.json",
-        std::env::args().nth(4).unwrap_or_else(|| "runs/optomotor".into())
-    );
+    let path = format!("{}-centered.json", out_prefix);
     fs::write(&path, out).unwrap();
     (c_odor, c_vis, pre_bias)
 }

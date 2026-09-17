@@ -148,6 +148,9 @@ pub struct BrainState {
     pub spikes: Vec<u32>,
     pub sensory_gain: Vec<f32>,
     pub rng: u64,
+    /// top-level in the wire format; defaulted so older checkpoints that
+    /// carry tick outside `brain` still deserialize
+    #[serde(default)]
     pub tick: u64,
 }
 

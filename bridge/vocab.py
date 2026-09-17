@@ -129,9 +129,8 @@ INTER = frozenset({
 })
 
 # somaSide/rootSide -> side code (kernel contract: 0 unknown, 1 L, 2 R, 3 midline).
-# NOTE: v1.0 data writes midline as "M", which matches neither key; such rows
-# fall through exactly as before (rootSide, else 0) and are reported.
-MALECNS_SIDE = {"L": 1, "R": 2, "midline": 3}
+# v1.0 writes midline as "M" ("midline" also seen in derived tables).
+MALECNS_SIDE = {"L": 1, "R": 2, "M": 3, "midline": 3}
 
 
 def _isna(v) -> bool:

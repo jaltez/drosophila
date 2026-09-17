@@ -13,36 +13,63 @@ use transduce::{BehaviorMapFile, OdorField};
 use runlog::TraceRecord;
 use world::{Sim, WorldConfig};
 
-fn main() {
-    let args: Vec<String> = std::env::args().collect();
-    let con_dir = args.get(1).map(|s| s.as_str()).unwrap_or("bridge/out/connectome-malecns-v1.0");
-    let params_path = args.get(2).map(|s| s.as_str()).unwrap_or("params/homeostasis_v1.json");
-    let map_path = args.get(3).map(|s| s.as_str()).unwrap_or("scenarios/behavior_map.json");
-    let out_dir = args.get(4).map(|s| s.as_str()).unwrap_or("runs/world-v1");
-    let seconds: u64 = args.get(5).and_then(|s| s.parse().ok()).unwrap_or(60);
-    let seed: u64 = args.get(6).and_then(|s| s.parse().ok()).unwrap_or(7);
-    let odor_x: f64 = args.get(7).and_then(|s| s.parse().ok()).unwrap_or(25.0);
-    let odor_y: f64 = args.get(8).and_then(|s| s.parse().ok()).unwrap_or(0.0);
-    let odor_k: f64 = args.get(9).and_then(|s| s.parse().ok()).unwrap_or(12.0);
-    let obj_x: f64 = args.get(10).and_then(|s| s.parse().ok()).unwrap_or(0.0);
-    let obj_y: f64 = args.get(11).and_then(|s| s.parse().ok()).unwrap_or(0.0);
-    let obj_brightness: f64 = args.get(12).and_then(|s| s.parse().ok()).unwrap_or(0.0);
-    let sugar_x: f64 = args.get(13).and_then(|s| s.parse().ok()).unwrap_or(f64::NAN);
-    let sugar_y: f64 = args.get(14).and_then(|s| s.parse().ok()).unwrap_or(f64::NAN);
-    let sugar = if sugar_x.is_nan() { None } else { Some((sugar_x, sugar_y)) };
-    let inst_file = args.get(15).map(|s| s.as_str()).unwrap_or("scenarios/steer_instances.json");
+/// Headless chemotaxis runner arguments. Positional form is kept for
+/// compatibility with the historical call signature.
+#[derive(clap::Parser)]
+struct Args {
+    #[arg(default_value = "bridge/out/connectome-malecns-v1.0")]
+    con_dir: String,
+    #[arg(default_value = "params/homeostasis_v1.json")]
+    params_path: String,
+    #[arg(default_value = "scenarios/behavior_map.json")]
+    map_path: String,
+    #[arg(default_value = "runs/world-v1")]
+    out_dir: String,
+    #[arg(default_value_t = 60)]
+    seconds: u64,
+    #[arg(default_value_t = 7)]
+    seed: u64,
+    #[arg(default_value_t = 25.0)]
+    odor_x: f64,
+    #[arg(default_value_t = 0.0)]
+    odor_y: f64,
+    #[arg(default_value_t = 12.0)]
+    odor_k: f64,
+    #[arg(default_value_t = 0.0)]
+    obj_x: f64,
+    #[arg(default_value_t = 0.0)]
+    obj_y: f64,
+    #[arg(default_value_t = 0.0)]
+    obj_brightness: f64,
+    /// NaN (the default) means no sugar source
+    #[arg(default_value_t = f64::NAN)]
+    sugar_x: f64,
+    #[arg(default_value_t = f64::NAN)]
+    sugar_y: f64,
+    #[arg(default_value = "scenarios/steer_instances.json")]
+    inst_file: String,
+}
 
-    let con = Connectome::load(Path::new(con_dir)).expect("load connectome");
+fn main() {
+    let a = <Args as clap::Parser>::parse();
+    let Args {
+        con_dir, params_path, map_path, out_dir, seconds, seed,
+        odor_x, odor_y, odor_k, obj_x, obj_y, obj_brightness,
+        sugar_x, sugar_y, inst_file,
+    } = a;
+    let sugar = if sugar_x.is_nan() { None } else { Some((sugar_x, sugar_y)) };
+
+    let con = Connectome::load(Path::new(&con_dir)).expect("load connectome");
     let mut params: LifParams =
-        serde_json::from_slice(&fs::read(params_path).unwrap()).unwrap();
+        serde_json::from_slice(&fs::read(&params_path).unwrap()).unwrap();
     params.seed = seed;
     if params.gains_exc.len() != con.superclass_names.len() {
         params = LifParams::default_for(&con);
     }
     let map: BehaviorMapFile =
-        serde_json::from_slice(&fs::read(map_path).unwrap()).unwrap();
+        serde_json::from_slice(&fs::read(&map_path).unwrap()).unwrap();
     let steer_insts: Vec<transduce::SteerInstance> =
-        serde_json::from_slice(&fs::read(inst_file).unwrap()).unwrap();
+        serde_json::from_slice(&fs::read(&inst_file).unwrap()).unwrap();
     let vis_steer: Vec<transduce::SteerInstance> = fs::read(
         "scenarios/visual_steer_instances.json",
     )
@@ -135,7 +162,7 @@ fn main() {
     let wall = t0.elapsed().as_secs_f64();
     let d_end = sim_dist(&sim, &field);
 
-    fs::create_dir_all(out_dir).unwrap();
+    fs::create_dir_all(&out_dir).unwrap();
     let summary = json!({
         "config": {
             "seconds": seconds, "seed": seed,
@@ -164,10 +191,10 @@ fn main() {
         "trace_first": trace.first(),
         "trace_last": trace.last(),
     });
-    runlog::write_trace_parquet(&Path::new(out_dir).join("trace.parquet"), &trace)
+    runlog::write_trace_parquet(&Path::new(&out_dir).join("trace.parquet"), &trace)
         .unwrap();
     fs::write(
-        Path::new(out_dir).join("summary.json"),
+        Path::new(&out_dir).join("summary.json"),
         serde_json::to_vec_pretty(&summary).unwrap(),
     )
     .unwrap();

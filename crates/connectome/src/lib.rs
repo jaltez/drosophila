@@ -71,9 +71,35 @@ pub enum LoadError {
     Io(#[from] std::io::Error),
 }
 
-fn read_exact<T: Copy>(path: &Path, expect: usize) -> Result<Vec<T>, LoadError> {
+/// Little-endian element decode, checked (no alignment assumptions, no
+/// unsafe): the artifact files are LE by contract.
+trait FromLeBytes: Copy {
+    const SIZE: usize;
+    fn from_le(b: &[u8]) -> Self;
+}
+
+macro_rules! impl_le {
+    ($($t:ty),*) => {$(
+        impl FromLeBytes for $t {
+            const SIZE: usize = std::mem::size_of::<$t>();
+            fn from_le(b: &[u8]) -> Self {
+                <$t>::from_le_bytes(b.try_into().expect("chunk size"))
+            }
+        }
+    )*};
+}
+impl_le!(u64, u32, u16, i16);
+
+impl FromLeBytes for u8 {
+    const SIZE: usize = 1;
+    fn from_le(b: &[u8]) -> Self {
+        b[0]
+    }
+}
+
+fn read_exact<T: FromLeBytes>(path: &Path, expect: usize) -> Result<Vec<T>, LoadError> {
     let bytes = fs::read(path).map_err(|_| LoadError::Missing(path.into()))?;
-    let size = std::mem::size_of::<T>();
+    let size = T::SIZE;
     if bytes.len() != expect * size {
         return Err(LoadError::Size {
             file: path.into(),
@@ -81,10 +107,7 @@ fn read_exact<T: Copy>(path: &Path, expect: usize) -> Result<Vec<T>, LoadError> 
             actual: bytes.len() as u64,
         });
     }
-    Ok(bytes
-        .chunks_exact(size)
-        .map(|c| unsafe { c.align_to::<T>().1[0] })
-        .collect())
+    Ok(bytes.chunks_exact(size).map(T::from_le).collect())
 }
 
 impl Connectome {

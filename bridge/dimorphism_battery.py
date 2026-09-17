@@ -16,6 +16,9 @@ import numpy as np
 import pandas as pd
 import pyarrow.feather as feather
 
+from analysis import enrichment_z, fdi
+from vocab import KEEP_STATUS
+
 RUNS = Path(__file__).parent / ".." / "runs"
 ANNOT = Path(__file__).parent / "data" / (
     "body-annotations-male-cns-v1.0-minconf-0.5.feather")
@@ -32,10 +35,7 @@ def load_types(path):
             for t, d in by.items()}
 
 
-def fdi(m, f):
-    dm, df = np.array(m), np.array(f)
-    return float(np.linalg.norm(dm - df) /
-                 (np.linalg.norm(dm) + np.linalg.norm(df) + 1e-9))
+
 
 
 def main():
@@ -74,10 +74,7 @@ def main():
         ANNOT,
         columns=["bodyId", "type", "dimorphism", "fruDsx", "statusLabel"],
     ).to_pandas()
-    keep = {"Reviewed", "Roughly traced", "Prelim Roughly traced",
-            "RT Hard to trace", "Hard to trace", "Partially traced",
-            "0.5assign", "Anchor", "Soma Anchor", "Sensory Anchor"}
-    an = an[an.statusLabel.isin(keep)]
+    an = an[an.statusLabel.isin(KEEP_STATUS)]
     dim_types = set(an.loc[an.dimorphism.notna(), "type"].dropna())
     frutypes = set(an.loc[an.fruDsx.notna(), "type"].dropna())
     print(f"annotated: {len(dim_types)} dimorphism-flagged types, "
@@ -90,27 +87,8 @@ def main():
     flagged = np.array([r["anat_dimorphic"] for r in rows])
     fru = np.array([r["fru"] for r in rows])
 
-    def enrich(mask, label):
-        hi = fdi_arr >= np.quantile(fdi_arr, 0.75)  # top FDI quartile
-        a = int((hi & mask).sum())
-        b = int((hi & ~mask).sum())
-        c = int((~hi & mask).sum())
-        d = int((~hi & ~mask).sum())
-        # proportion of flagged types in top-FDI quartile vs rest
-        p_hi = a / max(a + b, 1)
-        p_lo = c / max(c + d, 1)
-        # two-proportion z
-        p_pool = (a + c) / max(a + b + c + d, 1)
-        se = math.sqrt(p_pool * (1 - p_pool) *
-                       (1 / max(a + b, 1) + 1 / max(c + d, 1))) or 1e-9
-        z = (p_hi - p_lo) / se
-        print(f"{label:<24} top-FDI flagged: {a}/{a+b} ({p_hi:.0%}) vs "
-              f"{c}/{c+d} ({p_lo:.0%})  z={z:+.2f}")
-        return z
-
-    import math
-    z_dim = enrich(flagged, "anatomical dimorphism")
-    z_fru = enrich(fru, "fruDsx")
+    z_dim, _ = enrichment_z(fdi_arr, flagged, "anatomical dimorphism")
+    z_fru, _ = enrichment_z(fdi_arr, fru, "fruDsx")
 
     rows.sort(key=lambda r: -r["fdi"])
     print("\ntop-15 functionally dimorphic DN types:")

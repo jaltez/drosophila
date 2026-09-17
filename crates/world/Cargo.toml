@@ -10,6 +10,7 @@ brain = { path = "../brain" }
 transduce = { path = "../transduce" }
 runlog = { path = "../runlog" }
 serde = { workspace = true }
+clap = { workspace = true }
 serde_json = { workspace = true }
 bevy = { version = "0.19.1", optional = true, default-features = false, features = [
     "2d_bevy_render", "debug", "bevy_sprite", "bevy_winit", "bevy_text", "bevy_ui",
