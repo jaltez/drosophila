@@ -15,3 +15,7 @@ jobs:
         run: cargo test --workspace
       - name: Bit-determinism smoke on synthetic artifact
         run: cargo test --release -p brain determinism_synthetic
+      - name: Bridge pin tests (vocab, steering-set balance)
+        run: |
+          python3 bridge/test_vocab.py
+          python3 bridge/test_steer_balance.py

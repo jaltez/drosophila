@@ -1,0 +1,15 @@
+{
+ "configs": [
+  {"name": "odor", "odor_k": 6.0, "dc_tau_ms": 1000.0, "surge_gain": 1.5,
+   "steer_gain_rad_s": 8.0, "steer_scale_hz": 150.0, "cast_surge": true,
+   "sweep_amp_rad_s": 4.5, "sweep_period_ms": 2500, "surge_ms": 2500,
+   "cast_speed": 0.4, "odor": [25.0, 0.0], "control": false},
+  {"name": "control", "odor_k": 0.0, "dc_tau_ms": 1000.0, "surge_gain": 0.0,
+   "steer_gain_rad_s": 8.0, "steer_scale_hz": 150.0, "cast_surge": true,
+   "sweep_amp_rad_s": 4.5, "sweep_period_ms": 2500, "surge_ms": 2500,
+   "cast_speed": 0.4, "odor": [25.0, 0.0], "control": true}
+ ],
+ "seeds": [7, 11, 23, 42, 99],
+ "seconds": 30,
+ "out_root": "runs/lockon3-female-mini"
+}
