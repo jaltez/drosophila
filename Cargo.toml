@@ -12,6 +12,8 @@ members = [
 version = "0.1.0"
 edition = "2021"
 license = "CC-BY-4.0"
+authors = ["Javier Altez"]
+repository = "https://github.com/jaltez/drosophila"
 
 [workspace.dependencies]
 serde = { version = "1", features = ["derive"] }
